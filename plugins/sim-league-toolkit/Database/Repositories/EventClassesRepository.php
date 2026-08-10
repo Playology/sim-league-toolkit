@@ -182,6 +182,25 @@
      * @return stdClass[]
      * @throws Exception
      */
+    public static function listAvailableForPlan(int $planId, int $gameId): array {
+      $tableName = self::prefixedTableName(TableNames::EVENT_CLASSES);
+      $planClassesTableName = self::prefixedTableName(TableNames::PLAN_CLASSES);
+
+      $query = "SELECT ec.*
+                FROM $tableName ec
+                LEFT OUTER JOIN $planClassesTableName pc
+                ON pc.planId = $planId
+                AND pc.eventClassId = ec.id
+                WHERE ec.gameId = $gameId
+                AND pc.eventClassId IS NULL;";
+
+      return self::getResults($query);
+    }
+
+    /**
+     * @return stdClass[]
+     * @throws Exception
+     */
     public static function listAvailableForStandaloneEvent(int $standaloneEventId): array {
       $tableName = self::prefixedTableName(TableNames::EVENT_CLASSES);
       $standaloneEventClassesTableName = self::prefixedTableName(TableNames::STANDALONE_EVENT_CLASSES);

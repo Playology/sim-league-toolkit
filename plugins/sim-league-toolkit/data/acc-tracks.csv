@@ -1,25 +1,25 @@
-barcelona,Barcelona,Circuit de Barcelona-Catalunya,Spain,ESP,41.5695,2.2575,16,0
-brands_hatch,Brands Hatch,Brands Hatch Circuit,England,GBR-ENG,51.3566,0.2614,9,0
-cota,COTA,Circuit of the Americas,USA,USA,30.135,-97.6341,20,0
-donington,Donington Park,Donington Park,England,GBR-ENG,52.8304,-1.3749,12,0
-hungaroring,Hungaroring,Hungaroring,Hungary,HUN,47.583,19.2498,14,0
-imola,Imola,Autodromo Enzo e Dino Ferrari,Italy,ITA,44.3408,11.7137,22,0
-indianapolis,Indianapolis,Indianapolis Motor Speedway,USA,USA,39.7951,-86.2348,14,0
-kyalami,Kyalami,Kyalami Grand Prix Circuit,South Africa,ZAF,-25.9976,28.0682,16,0
-laguna_seca,Laguna Seca,WeatherTech Raceway Laguna Seca,USA,USA,36.5845,-121.7535,11,0
-misano,Misano,Misano World Circuit,Italy,ITA,43.96242,12.68381,16,0
-monza,Monza,Monza Circuit,Italy,ITA,45.621,9.286,11,0
-mount_panorama,Mount Panorama,Mount Panorama Circuit,Australia,AUS,-33.4486,149.5547,23,0
-nurburgring,Nürburgring,Nürburgring,Germany,DEU,50.3309,6.9414,17,0
-oulton_park,Oulton Park,Oulton Park,England,GBR-ENG,53.1768,-2.6168,17,0
-paul_ricard,Paul Ricard,Circuit Paul Ricard,France,FRA,43.2529,5.7912,13,0
-silverstone,Silverstone,Silverstone,England,GBR-ENG,52.071,-1.0147,18,0
-snetterton,Snetterton,Snetterton Circuit,England,GBR-ENG,52.4648,0.9473,12,0
-spa,Spa-Francorchamps,Circuit de Spa-Francorchamps,Belgium,BEL,50.4375,5.9685,19,0
-suzuka,Suzuka,Suzuka Circuit,Japan,JPN,34.8441,136.5329,18,0
-watkins_glen,Watkins Glen,Watkins Glen International,USA,USA,42.3362,-76.9252,11,0
-zandvoort,Zandvoort,Circuit Zandvoort,Netherlands,NLD,52.3881,4.545,14,0
-zolder,Zolder,Circuit Zolder,Belgium,BEL,50.9905,5.258,10,0
-valencia,Valencia,Circuit Ricardo Tormo Valencia,Spain,ESP,39.48562,-0.63056,14,0
-red_bull_ring,Red Bull Ring,Red Bull Ring,Austria,AUT,47.2228736,14.760198,10,0
-nurburgring_24h,24H Nürb,24H Nürburgring,Germany,DEU,50.3576,6.955,170,0
+barcelona,Barcelona,Circuit de Barcelona-Catalunya,Spain,ESP,41.5695,2.2575,16,4655,
+brands_hatch,Brands Hatch,Brands Hatch Circuit,England,GBR-ENG,51.3566,0.2614,9,3908,
+cota,COTA,Circuit of the Americas,USA,USA,30.135,-97.6341,20,5513,The American Track Pack
+donington,Donington Park,Donington Park,England,GBR-ENG,52.8304,-1.3749,12,4020,The British GT Pack
+hungaroring,Hungaroring,Hungaroring,Hungary,HUN,47.583,19.2498,14,4381,
+imola,Imola,Autodromo Enzo e Dino Ferrari,Italy,ITA,44.3408,11.7137,22,4959,2020 GT World Challenge Pack
+indianapolis,Indianapolis,Indianapolis Motor Speedway,USA,USA,39.7951,-86.2348,14,4167,The American Track Pack
+kyalami,Kyalami,Kyalami Grand Prix Circuit,South Africa,ZAF,-25.9976,28.0682,16,4522,The Intercontinental GT Pack
+laguna_seca,Laguna Seca,WeatherTech Raceway Laguna Seca,USA,USA,36.5845,-121.7535,11,3602,The Intercontinental GT Pack
+misano,Misano,Misano World Circuit,Italy,ITA,43.96242,12.68381,16,4226,
+monza,Monza,Monza Circuit,Italy,ITA,45.621,9.286,11,5793,
+mount_panorama,Mount Panorama,Mount Panorama Circuit,Australia,AUS,-33.4486,149.5547,23,6213,The Intercontinental GT Pack
+nurburgring,Nürburgring,Nürburgring,Germany,DEU,50.3309,6.9414,17,5173,
+oulton_park,Oulton Park,Oulton Park,England,GBR-ENG,53.1768,-2.6168,17,4307,The British GT Pack
+paul_ricard,Paul Ricard,Circuit Paul Ricard,France,FRA,43.2529,5.7912,13,5770,
+silverstone,Silverstone,Silverstone,England,GBR-ENG,52.071,-1.0147,18,5891,
+snetterton,Snetterton,Snetterton Circuit,England,GBR-ENG,52.4648,0.9473,12,4779,The British GT Pack
+spa,Spa-Francorchamps,Circuit de Spa-Francorchamps,Belgium,BEL,50.4375,5.9685,19,7004,
+suzuka,Suzuka,Suzuka Circuit,Japan,JPN,34.8441,136.5329,18,5807,The Intercontinental GT Pack
+watkins_glen,Watkins Glen,Watkins Glen International,USA,USA,42.3362,-76.9252,11,5552,The American Track Pack
+zandvoort,Zandvoort,Circuit Zandvoort,Netherlands,NLD,52.3881,4.545,14,4252,
+zolder,Zolder,Circuit Zolder,Belgium,BEL,50.9905,5.258,10,4011,
+valencia,Valencia,Circuit Ricardo Tormo Valencia,Spain,ESP,39.48562,-0.63056,14,4005,2023 GT World Challenge Pack
+red_bull_ring,Red Bull Ring,Red Bull Ring,Austria,AUT,47.2228736,14.760198,10,4318,
+nurburgring_24h,24H Nürb,24H Nürburgring,Germany,DEU,50.3576,6.955,170,25300,Nurburgring 24H Pack

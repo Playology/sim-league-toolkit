@@ -46,4 +46,23 @@
     public static function list(): array {
       return self::getResultsFromTable(TableNames::CARS);
     }
+
+    /**
+     * @throws Exception
+     */
+    public static function listAvailableForPlan(int $planId, int $gameId): array {
+      $carsTableName = self::prefixedTableName(TableNames::CARS);
+      $planCarsTableName = self::prefixedTableName(TableNames::PLAN_CARS);
+
+      $query = "SELECT c.*
+                FROM $carsTableName c
+                LEFT OUTER JOIN $planCarsTableName pc
+                ON pc.planId = {$planId}
+                AND pc.carId = c.id
+                WHERE c.gameId = {$gameId}
+                AND pc.carId IS NULL
+                ORDER BY c.carClass, c.name;";
+
+      return self::getResults($query);
+    }
   }

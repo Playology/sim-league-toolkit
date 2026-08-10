@@ -14,3 +14,5 @@ generated
 
 /plugins/sim-league-toolkit/build
 /plugins/sim-league-toolkit/src/admin/generated/enums.ts
+
+/.claude

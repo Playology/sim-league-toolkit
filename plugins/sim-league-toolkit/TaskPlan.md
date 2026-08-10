@@ -93,7 +93,11 @@ migrated** (member profiles through Trophies) — Gutenberg blocks/theme work re
      the `Championships` list toolbar (alongside a new reusable `useSearchAndSort` hook added to the
      same screen). Track Master rounds force `allowEntryChange = false`/`entryChangeLimit = 0` and use
      the `FreeForAll` car-class convention already established by the Track Master migration work.
-   - **Championship Plans** — unblocked now the Builder exists; not started, next up.
+   - **Championship Plans — admin side built and confirmed working by Mike 2026-08-10.** Full
+     pre-season voting data model + admin CRUD + track/car/class pool management + Results tab
+     hand-off into the Championship Builder. See "Championship Plans (admin side)" section below for
+     full architecture. **Still to come: the public-facing Gutenberg voting block** (open-plans list +
+     tile-dialog voting UI + favourites/"pick for me") — not started, next up.
 5. **Per-game result import** — parsing/import per game, built on manual entry. The theme's biggest
    complexity area (3 separate bespoke parsers for ACC/AMS2 old/AMS2 new) — needs a real
    `ResultParser`-per-`GameKey` abstraction here, not the theme's string-branching approach.
@@ -324,6 +328,87 @@ the first blocks slice above. Full plan is in the session's plan file
 - Verification so far: `php -l` on all new/changed PHP files, `tsc --noEmit`, `npm run build` — all
   clean. **Not yet exercised in the browser** — needs the pattern inserted into a test page and
   checked both logged-in and logged-out (private window), plus each block's editor preview.
+
+## Championship Plans (admin side, 2026-08-10) — DONE, confirmed working by Mike
+
+Pre-season voting: members vote on candidate tracks/cars/classes before a season, admin closes the
+plan and hands the winners to the Championship Builder. Full parity scope confirmed with Mike:
+admin-curated *and* member-suggested/voted classes, favourites + weighted "pick for me" auto-vote,
+member voting UI as an inline tile-dialog (not a dedicated page). This session built the admin side
+only — see "Sequencing plan" above for the still-to-come public voting block.
+
+**Data model** (8 new tables): `sltk_championship_plans` (+ `createdChampionshipId`, new vs. ACCLT,
+so the Results tab can show "→ Championship #X" rather than allow a second accidental build) +
+pool/vote/favourite tables for tracks, cars (Track Master only), and classes. **Plans vote at track
+granularity, not layout** — `sltk_plan_tracks`/`_track_votes`/`_track_favourites` key on `trackId`
+only. This was a real bug caught by Mike during testing: the first version keyed on `trackLayoutId`,
+which is fine for AMS2/LMU but left the pool permanently empty for ACC, which has no
+`sltk_track_layouts` rows at all. The specific layout (for games that have one) is picked later in
+the Championship Builder, same as any other round — Plans only decide which physical tracks make the
+season.
+
+**Domain**: `Domain\ChampionshipPlan` (entity + pool CRUD) and a separate
+`Domain\Services\ChampionshipPlanVotingService` (vote-casting, cap enforcement, weighted "pick for
+me" — kept off the entity since it's a distinct responsibility, same split as
+[[sltk-championship-builder]]'s service). Tally read DTOs (`ChampionshipPlanTrackTally`/`CarTally`/
+`ClassTally`) follow the `toDto()` value-object precedent from Trophies.
+
+**Two-tier API, a first for the plugin**: `ChampionshipPlanApiController` (admin CRUD/pools/tallies,
+standard `manage_options` trait composition) plus a separate `ChampionshipPlanVoteApiController` —
+the plugin's **first genuinely non-admin-gated controller**, extending `ApiController` directly with
+a custom `is_user_logged_in()` permission callback (the `HasPost`/`HasDelete`/etc. traits hardcode
+`manage_options`, confirmed by reading them, so member-facing routes can't use them as-is). This
+controller exists now but has no caller yet — the public voting block is what will use it.
+
+**Admin UI**: new "Championship Plans" top-level nav section, mirroring `Championships.tsx`'s
+list/editor shape. Editor tabs: Details → Tracks → Cars (Track Master only) → Classes → Results.
+Tracks/Cars/Classes tabs reuse the "available-item selector + add + card grid with delete" pattern
+from `ChampionshipClasses.tsx`. **Track filters added** (ACCLT parity, requested after initial build):
+exclude tracks from the game's most recent championship, exclude DLC tracks, min/max length, plus an
+"Add All" bulk button (new `POST .../tracks/bulk` endpoint, wrapped in one DB transaction) instead of
+one-at-a-time adding.
+
+**ACC track metadata — architectural precedent worth reusing**: ACC has no real track/layout split
+(one config per venue), but DLC/length/corners data for it lives in the *legacy ACCLT* `acc-tracks.csv`
+(SLTK's own copy had dropped this data during an earlier reformat — cross-referenced back against
+ACCLT's `data/acc-tracks.csv` to recover real values, fixing a data gap along the way, incl. a
+transcription bug in ACCLT's own data: Laguna Seca's length was `33602`, corrected to the real `3602`).
+Two approaches were considered for storing this: (1) add `corners`/`length`/`dlcPack` columns directly
+to `Tracks`, requiring every query that wants this data to check two locations depending on the game;
+(2) give ACC **one synthetic `TrackLayouts` row per track** (`TrackLayoutsTableBuilder::loadAccLayouts()`),
+reusing the exact same table/columns AMS2/LMU already use. **Went with (2), Mike's call** — `Game::supportsLayouts`
+stays `false` for ACC, so no UI anywhere (`TrackSelector`, event editors, Track Master picks) shows a
+pointless one-option layout dropdown; the layout rows are pure metadata carriers a filter query can
+join against uniformly, never surfaced as a user-facing choice. Worth reusing this pattern for any
+future feature that wants track-level metadata for a layout-less game, rather than re-adding
+track-level columns.
+
+**Real bug found and fixed along the way**: `TrackLayouts.corners` was a signed `tinyint` (max 127),
+silently clamping the Nürburgring 24h combined layout's real 170 corners down to 127 with no error.
+Widened to `smallint` — protects any future AMS2/LMU layout that crosses 127 too, not just this ACC
+case.
+
+**Builder hand-off**: `ChampionshipBuilderWizard` gained one new optional prop
+(`initialFormData?: Partial<ChampionshipBuilderFormData>`), merged into its existing
+`createDefaultFormData()`. The Results tab shows sorted vote tallies with admin checkboxes to mark
+winners (no auto-selection — admin decides how many rounds/which classes, same "prefill + redirect,
+human finishes it" ethos as ACCLT) and builds the `ChampionshipBuilderFormData` directly from the
+plan + checked winners in the browser — no new backend mapping code, no duplication of
+`ChampionshipBuilderService`'s persistence logic. On save, writes back `createdChampionshipId` via a
+dedicated `POST .../created-championship` route (kept separate from the general `PUT` so routine
+detail edits can never accidentally clear the link).
+
+**Also fixed**: the long-standing unscoped global `.p-button { margin-top: 1rem !important; }` CSS bug
+(previously only ever locally patched around, e.g. `.max-entrants-editor .p-button`) — every inline
+button in the admin app sat visibly below-center next to adjacent dropdowns/text. Removed the global
+rule entirely; the `1rem` top margin it was actually meant for (spacing a Save/Cancel pair below a
+stacked form) now lives directly on `SaveSubmitButton`/`CancelButton`.
+
+Verification: `php -l`, `tsc --noEmit`, `npm run build` all clean throughout; confirmed working by
+Mike in the browser against the `accleaugetools`-junctioned site (its own `sim-league-toolkit` site
+DB wasn't running this session — same DB-fix recipe applies there too if Mike switches sites, just
+needs a plugin deactivate/reactivate to pick up schema changes made only via `TableBuilder` edits and
+not also applied live).
 
 ## Legacy data migration (ACCLT → SLTK, 2026-08-02 → 2026-08-03) — DONE
 

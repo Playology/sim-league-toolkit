@@ -67,7 +67,7 @@
     min-height: 0;
 
     .menu-container {
-      width: 200px;
+      width: 240px;
       overflow-y: auto;
       transition: width 0.3s ease;
       background: var(--surface-card);
@@ -83,6 +83,7 @@
           color: var(--surface-900);
           text-decoration: none;
           padding: 0.75rem 1rem;
+          white-space: nowrap;
 
           &:hover {
             background-color: var(--surface-hover);
@@ -333,13 +334,6 @@ body,
   }
 }
 
-.p-button {
-  margin-top: 1rem !important;
-}
-
-.max-entrants-editor .p-button {
-  margin-top: 0 !important;
-}
 
 .p-panel {
   margin-top: 1rem;

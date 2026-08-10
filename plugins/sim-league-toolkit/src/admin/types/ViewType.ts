@@ -1,6 +1,7 @@
 export type ViewType =
     | 'dashboard'
     | 'championships'
+    | 'championshipPlans'
     | 'events'
     | 'eventClasses'
     | 'games'

@@ -19,6 +19,7 @@ import {BuilderTracksStep} from './BuilderTracksStep';
 interface ChampionshipBuilderWizardProps {
     onSaved: (championshipId: number) => void;
     onCancelled: () => void;
+    initialFormData?: Partial<ChampionshipBuilderFormData>;
 }
 
 type StepKind = 'details' | 'classes' | 'tracks' | 'trackMasterTrack' | 'trackMasterRounds' | 'sessions' | 'summary';
@@ -55,11 +56,11 @@ const createDefaultFormData = (): ChampionshipBuilderFormData => ({
     sessionTemplates: [],
 });
 
-export const ChampionshipBuilderWizard = ({onSaved, onCancelled}: ChampionshipBuilderWizardProps) => {
+export const ChampionshipBuilderWizard = ({onSaved, onCancelled, initialFormData}: ChampionshipBuilderWizardProps) => {
     const {mutateAsync: buildChampionship, isPending: isBuilding} = useBuildChampionship();
 
     const [stepIndex, setStepIndex] = useState(0);
-    const [formData, setFormData] = useState<ChampionshipBuilderFormData>(createDefaultFormData());
+    const [formData, setFormData] = useState<ChampionshipBuilderFormData>({...createDefaultFormData(), ...initialFormData});
 
     const isTrackMaster = formData.championshipType === ChampionshipType.TRACK_MASTER;
     const steps = isTrackMaster ? trackMasterSteps : standardSteps;

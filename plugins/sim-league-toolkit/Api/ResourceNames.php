@@ -9,6 +9,7 @@
     public final const string CHAMPIONSHIP_CLASS = 'championship-class';
     public final const string CHAMPIONSHIP_ENTRY = 'championship-entry';
     public final const string CHAMPIONSHIP_EVENT = 'championship-event';
+    public final const string CHAMPIONSHIP_PLAN = 'championship-plan';
     public final const string CHAMPIONSHIP_RESULT_PENALTY = 'championship-result-penalty';
     public final const string CHAMPIONSHIP_SESSION_RESULT = 'championship-session-result';
     public final const string COUNTRY = 'country';

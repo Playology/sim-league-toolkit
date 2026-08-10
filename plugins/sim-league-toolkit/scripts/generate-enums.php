@@ -12,6 +12,7 @@ require_once __DIR__ . '/script-autoloader.php';
   use SLTK\Core\Enums\EventType;
   use SLTK\Core\Enums\EventSessionType;
   use SLTK\Core\Enums\GameKey;
+  use SLTK\Core\Enums\PlanStatus;
   use SLTK\Core\Enums\ResultStatus;
   use SLTK\Core\Enums\TrophyAwardType;
   use SLTK\Core\Enums\TrophyScope;
@@ -21,6 +22,7 @@ require_once __DIR__ . '/script-autoloader.php';
     'EventType' => EventType::class,
     'SessionType' => EventSessionType::class,
     'GameKey' => GameKey::class,
+    'PlanStatus' => PlanStatus::class,
     'ResultStatus' => ResultStatus::class,
     'TrophyAwardType' => TrophyAwardType::class,
     'TrophyScope' => TrophyScope::class,

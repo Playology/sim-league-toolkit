@@ -8,6 +8,7 @@
     public final const string CHAMPIONSHIP_ENTRIES = 'sltk_championship_entries';
     public final const string CHAMPIONSHIP_EVENTS = 'sltk_championship_events';
     public final const string CHAMPIONSHIP_EVENT_CLASSES = 'sltk_championship_event_classes';
+    public final const string CHAMPIONSHIP_PLANS = 'sltk_championship_plans';
     public final const string CHAMPIONSHIP_RESULT_PENALTIES = 'sltk_championship_result_penalties';
     public final const string CHAMPIONSHIP_SESSION_RESULTS = 'sltk_championship_session_results';
     public final const string COUNTRIES = 'sltk_countries';
@@ -20,6 +21,13 @@
     public final const string GAMES = 'sltk_games';
     public final const string GAME_PLATFORMS = 'sltk_game_platforms';
     public final const string MIGRATION_RECORDS = 'sltk_migration_records';
+    public final const string PLAN_CARS = 'sltk_plan_cars';
+    public final const string PLAN_CAR_VOTES = 'sltk_plan_car_votes';
+    public final const string PLAN_CLASSES = 'sltk_plan_classes';
+    public final const string PLAN_CLASS_VOTES = 'sltk_plan_class_votes';
+    public final const string PLAN_TRACKS = 'sltk_plan_tracks';
+    public final const string PLAN_TRACK_FAVOURITES = 'sltk_plan_track_favourites';
+    public final const string PLAN_TRACK_VOTES = 'sltk_plan_track_votes';
     public final const string PLATFORMS = 'sltk_platforms';
     public final const string RACE_NUMBERS = 'sltk_race_numbers';
     public final const string RULE_SETS = 'sltk_rule_sets';

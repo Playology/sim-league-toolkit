@@ -9,7 +9,7 @@ interface SaveSubmitButtonProps {
 
 export const SaveSubmitButton = ({disabled, name = 'submitForm'}: SaveSubmitButtonProps) => {
     return (
-        <Button type='submit' disabled={disabled} name={name}>
+        <Button type='submit' disabled={disabled} name={name} style={{marginTop: '1rem'}}>
             {__('Save', 'sim-league-toolkit')}
         </Button>
     );

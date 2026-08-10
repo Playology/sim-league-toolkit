@@ -49,6 +49,11 @@ export const SimLeagueToolkitApp = () => {
             view: 'championships',
         },
         {
+            label: __('Championship Plans', 'sim-league-toolkit'),
+            icon: 'fa-solid fa-square-poll-vertical',
+            view: 'championshipPlans',
+        },
+        {
             label: __('Standalone Events', 'sim-league-toolkit'),
             icon: 'fa-solid fa-flag-checkered',
             view: 'events',

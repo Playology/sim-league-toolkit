@@ -10,7 +10,7 @@ interface CancelButtonProps {
 export const CancelButton = ({onCancel, disabled = false}: CancelButtonProps) => {
     return (
         <Button severity='secondary' onClick={onCancel} disabled={disabled}
-                style={{marginLeft: '.5rem', marginRight: '.5rem'}}>
+                style={{marginTop: '1rem', marginLeft: '.5rem', marginRight: '.5rem'}}>
             {__('Cancel', 'sim-league-toolkit')}
         </Button>
     );

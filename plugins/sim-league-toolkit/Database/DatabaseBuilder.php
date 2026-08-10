@@ -40,6 +40,14 @@
       self::$builders[] = new StandaloneSessionResultsTableBuilder();
       self::$builders[] = new StandaloneResultPenaltiesTableBuilder();
       self::$builders[] = new TrophiesTableBuilder();
+      self::$builders[] = new ChampionshipPlansTableBuilder();
+      self::$builders[] = new PlanTracksTableBuilder();
+      self::$builders[] = new PlanTrackVotesTableBuilder();
+      self::$builders[] = new PlanTrackFavouritesTableBuilder();
+      self::$builders[] = new PlanCarsTableBuilder();
+      self::$builders[] = new PlanCarVotesTableBuilder();
+      self::$builders[] = new PlanClassesTableBuilder();
+      self::$builders[] = new PlanClassVotesTableBuilder();
       self::$builders[] = new MigrationRecordsTableBuilder();
     }
 

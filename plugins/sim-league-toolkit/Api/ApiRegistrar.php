@@ -12,6 +12,8 @@
       '#/' . ResourceNames::EVENT_SESSION . '/\d+/standalone-results#' => StandaloneSessionResultApiController::class,
       '#/' . ResourceNames::EVENT_SESSION . '#' => EventSessionApiController::class,
       '#/' . ResourceNames::CHAMPIONSHIP_BUILDER . '#' => ChampionshipBuilderApiController::class,
+      '#/' . ResourceNames::CHAMPIONSHIP_PLAN . '/\d+/vote#' => ChampionshipPlanVoteApiController::class,
+      '#/' . ResourceNames::CHAMPIONSHIP_PLAN . '#' => ChampionshipPlanApiController::class,
       '#/' . ResourceNames::CHAMPIONSHIP . '/\d+/classes#' => ChampionshipClassApiController::class,
       '#/' . ResourceNames::CHAMPIONSHIP_EVENT . '/\d+/trophies/preview#' => TrophyApiController::class,
       '#/' . ResourceNames::CHAMPIONSHIP_EVENT . '/\d+/trophies/award#' => TrophyApiController::class,
