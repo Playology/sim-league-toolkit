@@ -13,6 +13,7 @@ interface CarSelectorProps {
     carId?: number;
     carClass?: string;
     disabled?: boolean;
+    id?: string;
     isInvalid?: boolean;
     validationMessage?: string;
 }
@@ -23,6 +24,7 @@ export const CarSelector = ({
                                 carId = 0,
                                 carClass = '*',
                                 disabled = false,
+                                id = 'car-selector',
                                 isInvalid = false,
                                 validationMessage = ''
                             }: CarSelectorProps) => {
@@ -37,7 +39,11 @@ export const CarSelector = ({
 
     const onSelect = (e: DropdownChangeEvent) => {
         setSelectedItemId(e.target.value);
-        onSelectedItemChanged(e.target.value);
+
+        const selectedCar = data.find(car => car.id === e.target.value);
+        if (selectedCar) {
+            onSelectedItemChanged(selectedCar);
+        }
     };
 
     const listItems: ListItem[] = ([{
@@ -50,8 +56,8 @@ export const CarSelector = ({
 
     return (
         <>
-            <label htmlFor='car-selector'>{__('Car', 'sim-league-toolkit')}</label>
-            <Dropdown id='car-selector' value={selectedItemId} options={listItems} onChange={onSelect}
+            <label htmlFor={id}>{__('Car', 'sim-league-toolkit')}</label>
+            <Dropdown id={id} value={selectedItemId} options={listItems} onChange={onSelect}
                       optionLabel='label'
                       optionValue='value' disabled={disabled || isLoading}/>
             <ValidationError

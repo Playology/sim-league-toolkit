@@ -8,7 +8,9 @@ import {InputText} from 'primereact/inputtext';
 
 import {BusyIndicator} from '../../components/BusyIndicator';
 import {CancelButton} from '../../components/CancelButton';
+import {CarSelector} from '../game/CarSelector';
 import {ChampionshipEventFormData, useCreateChampionshipEvent} from '../../../features/championship';
+import {ChampionshipType} from '../../../enums/generated/ChampionshipType';
 import {SaveSubmitButton} from '../../components/SaveSubmitButton';
 import {TrackSelector} from '../game/TrackSelector';
 import {useGame} from '../../../features/game';
@@ -17,6 +19,9 @@ import {ValidationError} from '../../components/ValidationError';
 interface NewChampionshipEventEditorProps {
     championshipId: number;
     gameId: number;
+    championshipType: ChampionshipType;
+    trackMasterTrackId?: number;
+    trackMasterTrackLayoutId?: number;
     onSaved: () => void;
     onCancelled: () => void;
 }
@@ -36,17 +41,23 @@ defaultTime.setMilliseconds(0);
 export const NewChampionshipEventEditor = ({
                                                championshipId,
                                                gameId,
+                                               championshipType,
+                                               trackMasterTrackId,
+                                               trackMasterTrackLayoutId,
                                                onSaved,
                                                onCancelled
                                            }: NewChampionshipEventEditorProps) => {
     const {mutateAsync: createChampionshipEvent, isPending: isLoading} = useCreateChampionshipEvent(championshipId);
     const {data: game, isLoading: gameIsLoading} = useGame(gameId);
 
+    const isTrackMaster = championshipType === ChampionshipType.TRACK_MASTER;
+
     const [gameSupportsLayouts, setGameSupportsLayouts] = useState(false);
     const [name, setName] = useState('');
     const [startDateTime, setStartDateTime] = useState(minDate);
-    const [trackId, setTrackId] = useState(0);
-    const [trackLayoutId, setTrackLayoutId] = useState(0);
+    const [trackId, setTrackId] = useState(isTrackMaster ? trackMasterTrackId ?? 0 : 0);
+    const [trackLayoutId, setTrackLayoutId] = useState(isTrackMaster ? trackMasterTrackLayoutId ?? 0 : 0);
+    const [trackMasterCarId, setTrackMasterCarId] = useState(0);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
     useEffect(() => {
@@ -73,6 +84,10 @@ export const NewChampionshipEventEditor = ({
             formData.trackLayoutId = trackLayoutId;
         }
 
+        if (isTrackMaster) {
+            formData.trackMasterCarId = trackMasterCarId;
+        }
+
         await createChampionshipEvent(formData);
         onSaved();
         resetForm();
@@ -81,8 +96,9 @@ export const NewChampionshipEventEditor = ({
     const resetForm = () => {
         setName('');
         setStartDateTime(minDate);
-        setTrackId(0);
-        setTrackLayoutId(0);
+        setTrackId(isTrackMaster ? trackMasterTrackId ?? 0 : 0);
+        setTrackLayoutId(isTrackMaster ? trackMasterTrackLayoutId ?? 0 : 0);
+        setTrackMasterCarId(0);
         setValidationErrors([]);
     };
 
@@ -99,6 +115,10 @@ export const NewChampionshipEventEditor = ({
 
         if (gameSupportsLayouts && trackLayoutId < 1) {
             errors.push('trackLayout');
+        }
+
+        if (isTrackMaster && trackMasterCarId < 1) {
+            errors.push('trackMasterCar');
         }
 
         setValidationErrors(errors);
@@ -129,7 +149,7 @@ export const NewChampionshipEventEditor = ({
                             <TrackSelector onSelectedTrackChanged={setTrackId}
                                            onSelectedTrackLayoutChanged={setTrackLayoutId} gameId={gameId}
                                            gameSupportsLayouts={gameSupportsLayouts} trackId={trackId}
-                                           trackLayoutId={trackLayoutId} disabled={isLoading}
+                                           trackLayoutId={trackLayoutId} disabled={isLoading || isTrackMaster}
                                            isInvalid={validationErrors.includes('track') || validationErrors.includes(
                                                'trackLayout')}
                                            trackValidationMessage={__('You must select the track that will be used' +
@@ -138,6 +158,15 @@ export const NewChampionshipEventEditor = ({
                                                                                 ' must select a track layout that' +
                                                                                 ' will be used for the event.',
                                                                             'sim-league-toolkit')}/>
+                            {isTrackMaster &&
+                                <CarSelector gameId={gameId}
+                                             carId={trackMasterCarId}
+                                             onSelectedItemChanged={(car) => setTrackMasterCarId(car.id)}
+                                             disabled={isLoading}
+                                             isInvalid={validationErrors.includes('trackMasterCar')}
+                                             validationMessage={__(
+                                                 'You must select the car being driven for this event.',
+                                                 'sim-league-toolkit')}/>}
                         </div>
                     </div>
                     <SaveSubmitButton disabled={isLoading} name='submitForm'/>

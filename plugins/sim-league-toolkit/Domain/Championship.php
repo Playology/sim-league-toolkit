@@ -136,6 +136,15 @@
     /**
      * @throws Exception
      */
+    public static function getMostRecentForGame(int $gameId): Championship|null {
+      $queryResult = ChampionshipRepository::getMostRecentForGame($gameId);
+
+      return Championship::fromStdClass($queryResult);
+    }
+
+    /**
+     * @throws Exception
+     */
     public static function getEventById(int $id): ChampionshipEvent|null {
       $queryResult = ChampionshipEventsRepository::getById($id);
 

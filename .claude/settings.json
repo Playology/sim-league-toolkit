@@ -25,7 +25,8 @@
       "Bash(php -l \"plugins/sim-league-toolkit/Blocks/BlockManager.php\")",
       "Bash(php -l \"plugins/sim-league-toolkit/Blocks/Render/VisibilityRenderer.php\")",
       "Bash(php -l \"plugins/sim-league-toolkit/Blocks/Render/JoinableItemsRenderer.php\")",
-      "Bash(xargs -0 -n1 php -l)"
+      "Bash(xargs -0 -n1 php -l)",
+      "Bash(echo \"TSC EXIT: $?\")"
     ]
   }
 }

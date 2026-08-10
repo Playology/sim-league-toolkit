@@ -292,7 +292,11 @@ export const ChampionshipEditor = ({onSaved, onCancelled, championship, onEditEv
                     <ChampionshipClasses championshipId={championship.id}/>
                 </AccordionTab>
                 <AccordionTab header={__('Events', 'sim-league-toolkit')}>
-                    <ChampionshipEvents championshipId={championship.id} gameId={gameId} onEditEvent={onEditEvent}/>
+                    <ChampionshipEvents championshipId={championship.id} gameId={gameId}
+                                        championshipType={championshipType}
+                                        trackMasterTrackId={trackMasterTrackId}
+                                        trackMasterTrackLayoutId={trackMasterTrackLayoutId}
+                                        onEditEvent={onEditEvent}/>
                 </AccordionTab>
                 <AccordionTab header={__('Server', 'sim-league-toolkit')}>
                 </AccordionTab>

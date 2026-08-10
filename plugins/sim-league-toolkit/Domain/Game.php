@@ -98,6 +98,34 @@
     }
 
     /**
+     * @return TrackLayout[]
+     * @throws Exception
+     */
+    public static function getTrackLayoutsForGame(int $gameId): array {
+      $queryResult = TrackRepository::listLayoutsForGame($gameId);
+
+      return array_map(function ($item) {
+        return TrackLayout::fromStdClass($item);
+      }, $queryResult);
+    }
+
+    /**
+     * @return int[] Distinct track ids used by the most recently started Championship for this game
+     * @throws Exception
+     */
+    public static function getMostRecentChampionshipTrackIds(int $gameId): array {
+      $championship = Championship::getMostRecentForGame($gameId);
+
+      if ($championship === null) {
+        return [];
+      }
+
+      $trackIds = array_map(fn($event) => $event->getTrackId(), Championship::listEvents($championship->getId()));
+
+      return array_values(array_unique($trackIds));
+    }
+
+    /**
      * @return Track[]
      * @throws Exception
      */

@@ -4,6 +4,7 @@ export interface ChampionshipEvent {
     championshipId: number;
     trackId: number;
     trackLayoutId?: number;
+    trackMasterCarId?: number;
     name: string;
     startDateTime: string;
     isActive: boolean;
@@ -12,5 +13,6 @@ export interface ChampionshipEvent {
     championship?: string;
     track?: string;
     trackLayout?: string;
+    trackMasterCar?: string;
     trophiesAwarded: boolean;
 }

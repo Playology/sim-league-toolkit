@@ -7,15 +7,26 @@ import {DataView} from 'primereact/dataview';
 import {BusyIndicator} from '../../components/BusyIndicator';
 import {ChampionshipEvent, useChampionshipEvents, useDeleteChampionshipEvent} from '../../../features/championship';
 import {ChampionshipEventCard} from './ChampionshipEventCard';
+import {ChampionshipType} from '../../../enums/generated/ChampionshipType';
 import {NewChampionshipEventEditor} from './NewChampionshipEventEditor';
 
 interface ChampionshipEventsProps {
     championshipId: number,
     gameId: number,
+    championshipType: ChampionshipType,
+    trackMasterTrackId?: number,
+    trackMasterTrackLayoutId?: number,
     onEditEvent: (event: ChampionshipEvent) => void,
 }
 
-export const ChampionshipEvents = ({championshipId, gameId, onEditEvent}: ChampionshipEventsProps) => {
+export const ChampionshipEvents = ({
+                                        championshipId,
+                                        gameId,
+                                        championshipType,
+                                        trackMasterTrackId,
+                                        trackMasterTrackLayoutId,
+                                        onEditEvent
+                                    }: ChampionshipEventsProps) => {
 
     const {data: championshipEvents = [], isLoading} = useChampionshipEvents(championshipId);
     const {mutateAsync: deleteChampionshipEvent} = useDeleteChampionshipEvent(championshipId);
@@ -84,7 +95,11 @@ export const ChampionshipEvents = ({championshipId, gameId, onEditEvent}: Champi
                       emptyMessage={__('No events have been created for this championship.', 'sim-league-toolkit')}
                       style={{marginRight: '1rem'}}/>
             {isAdding &&
-                <NewChampionshipEventEditor championshipId={championshipId} gameId={gameId} onSaved={onNewSaved}
+                <NewChampionshipEventEditor championshipId={championshipId} gameId={gameId}
+                                            championshipType={championshipType}
+                                            trackMasterTrackId={trackMasterTrackId}
+                                            trackMasterTrackLayoutId={trackMasterTrackLayoutId}
+                                            onSaved={onNewSaved}
                                             onCancelled={onCancelAdd}/>
             }
             {selectedItem && showDeleteConfirmation &&

@@ -4,8 +4,16 @@
 
   class ChampionshipEventsTableBuilder extends TableBuilder {
     public function addConstraints(string $tablePrefix): void {
+      global $wpdb;
+      $tableName = $this->tableName($tablePrefix);
+
+      if (empty($wpdb->get_results("SHOW COLUMNS FROM {$tableName} LIKE 'trackMasterCarId'"))) {
+        $wpdb->query("ALTER TABLE {$tableName} ADD COLUMN trackMasterCarId BIGINT NULL");
+      }
+
       $this->addSimpleForeignKey($tablePrefix, TableNames::EVENT_REFS, 'eventRefId');
       $this->addSimpleForeignKey($tablePrefix, TableNames::CHAMPIONSHIPS, 'championshipId');
+      $this->addSimpleForeignKey($tablePrefix, TableNames::CARS, 'trackMasterCarId');
     }
 
     public function applyAdjustments(string $tablePrefix): void {
@@ -26,6 +34,7 @@
             championshipId BIGINT NOT NULL,
             trackId BIGINT NOT NULL,
             trackLayoutId BIGINT NULL,
+            trackMasterCarId BIGINT NULL,
             name VARCHAR(255) NOT NULL,
             startDateTime DATETIME NOT NULL,
             isActive BOOLEAN NOT NULL DEFAULT false,

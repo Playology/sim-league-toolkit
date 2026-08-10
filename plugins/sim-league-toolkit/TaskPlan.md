@@ -58,11 +58,42 @@ migrated** (member profiles through Trophies) — Gutenberg blocks/theme work re
    styling support. Second slice done 2026-08-04: a generic logged-in/logged-out `sltk/visibility`
    block plus a personalized-member-dashboard block set (My Events/My Results/My Trophies/Latest
    Results/Joinable Items) and pattern replicating ACCLT's home page — see "Personalized dashboard
-   blocks phase" section below. Built but **not yet tested by Mike in the editor**. Still to come
-   before this phase can be called done: **Championship Plans** (pre-season voting) needs building
-   so it can get its own block too — Mike flagged 2026-08-04 that he'd nearly forgotten this feature
-   and wants it built specifically to complete the blocks work, not deferred further. My Time Trials
-   will **not** be built — see decision note below.
+   blocks phase" section below. **Confirmed working by Mike in the browser 2026-08-05** (some tweaks
+   wanted later, not yet specified). Still to come before this phase can be called done:
+   **Championship Plans** (pre-season voting) — Mike flagged 2026-08-04 that he'd nearly forgotten
+   this feature and wants it built specifically to complete the blocks work; its Championship Builder
+   dependency is now done (see item 4.5 below) so Plans is next up. My Time Trials will **not** be
+   built — see decision note below.
+4.5 ✅ **Dependency chain surfaced 2026-08-05**: researching Championship Plans (ACCLT) showed it
+   converts a closed plan's top-voted picks into a real championship via a one-way hand-off into a
+   separate "Championship Builder" wizard, and ACCLT Plans also has a "Track Master" mode (fixed
+   track, vote on rotating cars) that only makes sense once Track Master championships exist. Neither
+   dependency exists in SLTK yet. **Revised order: Track Master championships → Championship
+   Builder(s) → Championship Plans (admin side first, then member-voting blocks).**
+   - **Track Master championships — event-level support built 2026-08-05.** Championship-level
+     support (type selector, fixed track) already existed from earlier work. Added: `trackMasterCarId`
+     on `ChampionshipEvent` (the shared "car of the week", confirmed with Mike as one car for the
+     whole grid even with multiple age-based classes — classes tab needed no changes at all). Event
+     editors now auto-inherit the fixed track (disabled `TrackSelector`) and show a `CarSelector` for
+     the week's car when the championship is Track Master; event card shows the car. Along the way,
+     fixed a real latent bug in `CarSelector.tsx`: its `onSelectedItemChanged` callback was documented
+     to hand back a full `Car` but actually passed the raw dropdown value (a number) — every existing
+     caller (e.g. `EventClassEditor.tsx`'s single-car-class picker) was silently receiving `undefined`
+     via `.id` on a number. Fixed at the source. **Confirmed working by Mike in the browser
+     2026-08-05.**
+   - **Championship Builder(s) — built and confirmed working by Mike 2026-08-10** (both standard and
+     Track Master modes tested). New `Domain\Services\ChampionshipBuilderService` (`validate()` +
+     `build()`, the whole championship + classes + rounds/events + sessions created in one
+     `RepositoryBase::transaction()`) driven by a `ChampionshipBuilderPlan` value object (plus
+     `ChampionshipBuilderClassPlan`/`RoundPlan`/`SessionTemplatePlan`), one POST endpoint
+     (`ChampionshipBuilderApiController`). Frontend: `ChampionshipBuilderWizard`, steps branch on
+     championship type — standard is `details → classes → tracks → sessions → summary`, Track Master
+     swaps `tracks` for `trackMasterTrack` (single fixed track) + `trackMasterRounds` (per-round car
+     picks) since entry-change/track-per-round don't apply. Launched from a new flag-icon button on
+     the `Championships` list toolbar (alongside a new reusable `useSearchAndSort` hook added to the
+     same screen). Track Master rounds force `allowEntryChange = false`/`entryChangeLimit = 0` and use
+     the `FreeForAll` car-class convention already established by the Track Master migration work.
+   - **Championship Plans** — unblocked now the Builder exists; not started, next up.
 5. **Per-game result import** — parsing/import per game, built on manual entry. The theme's biggest
    complexity area (3 separate bespoke parsers for ACC/AMS2 old/AMS2 new) — needs a real
    `ResultParser`-per-`GameKey` abstraction here, not the theme's string-branching approach.
@@ -309,14 +340,15 @@ Migrate button itself) as of 2026-08-03:**
   to, migrated as a new custom 25-position scoring set.
 - Servers — ACC and AMS2 servers, core record + all game-specific settings (including a full AMS2
   server-settings schema added to `Config/ams2.json`, which didn't exist before this).
-- Event Classes (ACCLT: "Car Driver Classes") — 19 of 22 legacy templates migrated; 3 "Track Master"
-  ones permanently skipped (see "Agreed future features" below). Single-car classes resolve their
-  real car class from the matched SLTK car (by name) rather than trusting the legacy row's often-stale
-  `carClass` field.
+- Event Classes (ACCLT: "Car Driver Classes") — 19 of 22 legacy templates migrated at the time; the
+  3 "Track Master" ones (`carClass = 'FreeForAll'`) were skipped then, since revisited (see
+  "Track Master + banner backfill revisit" below). Single-car classes resolve their real car class
+  from the matched SLTK car (by name) rather than trusting the legacy row's often-stale `carClass`
+  field.
 - Standalone Events — event + classes + sessions + entrants together (19 migrated, 1 team event
   skipped per Mike's call).
-- Championships + Championship Events — 24 championships, 190 events (Track Master championships/
-  events skipped, same reasoning as the Event Class templates above). Extracted shared services
+- Championships + Championship Events — 24 championships, 190 events at the time (Track Master
+  championships/events were skipped then, since revisited — see below). Extracted shared services
   (`GameKeyLookup`, `DriverCategoryLookup`, `TrackResolver`, `EventClassCatalog`,
   `EventSessionMigrator`) used by both this and the standalone-event importer.
 - Session Results — `ChampionshipSessionResultImporter` + `StandaloneSessionResultImporter`, 2,504
@@ -359,11 +391,32 @@ by testing against real data):
   corrected via direct DB update since SLTK has no live users yet.
 
 **Agreed future features surfaced during migration work (not yet sequenced):**
-- **Track Master championships** — same track all season, single-car class rotates every event. No
-  SLTK equivalent yet; the 3 skipped Event Class templates should be re-migrated once this is built.
 - **Guest handling** — decided **against** adding to SLTK core (too single-league/edge-case — an
   ACCLT-only feature for Sixty Simthings' 60+ age restriction). If ever wanted, as a separate
   extension plugin, not core.
+
+**Track Master + banner backfill revisit (2026-08-05)** — now that Track Master championships are
+built (item 4.5 above), the migration tools were revisited:
+- `ChampionshipImporter`/`ChampionshipEventImporter` no longer skip Track Master championships/
+  events — they now resolve `trackMasterTrackId`/`trackMasterTrackLayoutId` (championship) and
+  `trackMasterCarId` (event, via the same `CarClassResolver` already used for entrant cars) and set
+  `championshipType`. `EventClassImporter` no longer skips the 3 `carClass = 'FreeForAll'` templates
+  — they turned out to be the age-based classes Mike's league actually uses ("Track Master 60"/
+  "Track Master 70"/"Track Master Guests"), not throwaway placeholders; `carClass` is a free-text
+  field so they migrate through the exact same path as every other class, `carClass` value carried
+  over verbatim (cosmetic — renameable later in the Event Classes admin screen if wanted). Session
+  results and trophies for Track Master championships/events needed no code changes — they were only
+  ever orphaned indirectly (parent championship/event id didn't resolve), so they now flow through
+  automatically once the parent rows migrate.
+- New `Migration\BannerImageBackfillImporter`, registered after the championship/event importers:
+  sweeps `Championship`/`ChampionshipEvent`/`StandaloneEvent` for an empty `bannerImageUrl` (early
+  ACCLT computed a random banner per page load instead of storing one, so older rows never got a
+  value written) and assigns one via the existing `BannerImageProvider::getRandomBannerImageUrl()`
+  helper. Not a legacy-row importer — no `sltk_migration_records` tracking, just an idempotent sweep
+  that fixes both already-migrated rows and any migrated in the same "Migrate" click, and leaves
+  already-set banners untouched.
+- `php -l` clean on all changed/new files. **Confirmed working by Mike 2026-08-05**, run against
+  real data on the `accleaugetools`-junctioned test site.
 - **Game/DLC ownership on member profiles** — ACCLT feature Mike wants ported eventually; the new
   `dlcPack` columns (Cars, TrackLayouts) are the reference data such a feature would need.
 

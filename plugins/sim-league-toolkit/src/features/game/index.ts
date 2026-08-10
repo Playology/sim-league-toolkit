@@ -13,4 +13,6 @@ export {useGameConfig} from './hooks/useGameConfig';
 export {useGames} from './hooks/useGames';
 export {usePlatforms} from './hooks/usePlatforms';
 export {useTrackLayouts} from './hooks/useTrackLayouts';
+export {useAllTrackLayouts} from './hooks/useAllTrackLayouts';
+export {useLastChampionshipTrackIds} from './hooks/useLastChampionshipTrackIds';
 export {useTracks} from './hooks/useTracks';

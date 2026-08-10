@@ -5,6 +5,7 @@
   use DateTime;
   use Exception;
   use SLTK\Core\Constants;
+  use SLTK\Core\Enums\ChampionshipType;
   use SLTK\Core\Enums\GameKey;
   use SLTK\Database\Repositories\MigrationRecordsRepository;
   use SLTK\Domain\Championship;
@@ -16,9 +17,6 @@
    * entrant roster (`acclt_championship_entrants`, distinct from per-event attendance, which has no
    * SLTK equivalent for championship events). Events/sessions are migrated separately by
    * `ChampionshipEventImporter`, once the championship this importer creates exists to attach to.
-   *
-   * Track Master championships (fixed track, single car rotating per event) are skipped entirely -
-   * Mike's call: SLTK has no field to hold a per-round car yet, revisit once that format is built.
    */
   class ChampionshipImporter implements MigrationImporter {
     private const string ENTITY_KEY = 'championship';
@@ -29,6 +27,7 @@
     private EventClassCatalog $eventClassCatalog;
     private GameKeyLookup $gameKeyLookup;
     private ServerImportSupport $serverImportSupport;
+    private TrackResolver $trackResolver;
 
     public function getEntityKey(): string {
       return self::ENTITY_KEY;
@@ -49,6 +48,7 @@
       $this->eventClassCatalog = new EventClassCatalog();
       $this->gameKeyLookup = new GameKeyLookup();
       $this->serverImportSupport = new ServerImportSupport();
+      $this->trackResolver = new TrackResolver();
 
       $classesByChampionshipId = $this->groupByChampionshipId(AccltLegacyDatabase::getChampionshipClasses());
       $entrantsByChampionshipId = $this->groupByChampionshipId(AccltLegacyDatabase::getChampionshipEntrants());
@@ -85,11 +85,6 @@
     private function migrateChampionship(stdClass $legacyChampionship, array $legacyClasses, array $legacyEntrants, MigrationRunResult $result): void {
       $legacyId = (int)$legacyChampionship->id;
 
-      if (!empty($legacyChampionship->isTrackMasterChampionship)) {
-        $result->recordSkipped(sprintf(__('Championship %1$d (%2$s): Track Master championship, deferred until that format is built in SLTK, skipped.', 'sim-league-toolkit'), $legacyId, $legacyChampionship->name));
-        return;
-      }
-
       try {
         if (MigrationRecordsRepository::isMigrated(self::ENTITY_KEY, $legacyId)) {
           $result->recordSkipped();
@@ -117,6 +112,14 @@
         $championship->setEntryChangeLimit((int)($legacyChampionship->entryChangeLimit ?? 0));
         $championship->setResultsToDiscard((int)($legacyChampionship->resultsToDiscard ?? 0));
         $championship->setScoringSetId($this->resolveScoringSetId($legacyClasses) ?? Constants::DEFAULT_ID);
+
+        if (!empty($legacyChampionship->isTrackMasterChampionship)) {
+          [$trackMasterTrackId, $trackMasterTrackLayoutId] = $this->trackResolver->resolve((int)$legacyChampionship->trackMasterTrackId, $gameId);
+          $championship->setChampionshipType(ChampionshipType::TrackMaster);
+          $championship->setTrackMasterTrackId($trackMasterTrackId);
+          $championship->setTrackMasterTrackLayoutId($trackMasterTrackLayoutId);
+        }
+
         $championship->save();
 
         MigrationRecordsRepository::recordMigration(self::ENTITY_KEY, $legacyId, $championship->getId());

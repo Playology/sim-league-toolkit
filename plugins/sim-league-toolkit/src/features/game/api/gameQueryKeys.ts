@@ -8,4 +8,6 @@ export const gameQueryKeys = {
     platforms: (gameId: number) => ['games', gameId, 'platforms'] as const,
     tracks: (gameId: number) => ['games', gameId, 'tracks'] as const,
     trackLayouts: (trackId: number) => ['games', 'tracks', trackId, 'layouts'] as const,
+    allTrackLayouts: (gameId: number) => ['games', gameId, 'track-layouts'] as const,
+    lastChampionshipTrackIds: (gameId: number) => ['games', gameId, 'last-championship-track-ids'] as const,
 } as const;

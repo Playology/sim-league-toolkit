@@ -33,6 +33,8 @@
     private int $trackId = Constants::DEFAULT_ID;
     private ?string $trackLayout = null;
     private ?int $trackLayoutId = null;
+    private ?string $trackMasterCar = null;
+    private ?int $trackMasterCarId = null;
     private bool $trophiesAwarded = false;
 
     /**
@@ -79,6 +81,8 @@
       $result->setChampionship($data->championship ?? '');
       $result->setTrack($data->track ?? '');
       $result->setTrackLayout($data->trackLayout ?? null);
+      $result->setTrackMasterCarId(isset($data->trackMasterCarId) ? (int)$data->trackMasterCarId : null);
+      $result->setTrackMasterCar($data->trackMasterCar ?? null);
       $result->setTrophiesAwarded((bool)($data->trophiesAwarded ?? false));
 
       return $result;
@@ -189,6 +193,22 @@
       $this->trackLayoutId = $value;
     }
 
+    public function getTrackMasterCar(): ?string {
+      return $this->trackMasterCar;
+    }
+
+    private function setTrackMasterCar(?string $value): void {
+      $this->trackMasterCar = $value;
+    }
+
+    public function getTrackMasterCarId(): ?int {
+      return $this->trackMasterCarId;
+    }
+
+    public function setTrackMasterCarId(?int $value): void {
+      $this->trackMasterCarId = $value;
+    }
+
     public function getTrophiesAwarded(): bool {
       return $this->trophiesAwarded;
     }
@@ -272,6 +292,7 @@
         'championshipId' => $this->getChampionshipId(),
         'trackId' => $this->getTrackId(),
         'trackLayoutId' => $this->getTrackLayoutId(),
+        'trackMasterCarId' => $this->getTrackMasterCarId(),
         'name' => $this->getName(),
         'startDateTime' => $this->getStartDateTime()->format('Y-m-d H:i:s'),
         'isActive' => $this->getIsActive(),
@@ -288,6 +309,8 @@
         'championshipId' => $this->getChampionshipId(),
         'trackId' => $this->getTrackId(),
         'trackLayoutId' => $this->getTrackLayoutId(),
+        'trackMasterCarId' => $this->getTrackMasterCarId(),
+        'trackMasterCar' => $this->getTrackMasterCar(),
         'name' => $this->getName(),
         'startDateTime' => $this->getStartDateTime()->format(DateTimeInterface::RFC3339_EXTENDED),
         'isActive' => $this->getIsActive(),

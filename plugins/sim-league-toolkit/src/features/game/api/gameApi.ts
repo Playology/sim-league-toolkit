@@ -15,6 +15,8 @@ const endpoints = {
     getPlatforms: (gameId: number) => `${gameRootEndpoint}/${gameId}/platforms`,
     getTracks: (gameId: number) => `${gameRootEndpoint}/${gameId}/tracks`,
     getTrackLayouts: (trackId: number) => `${gameRootEndpoint}/tracks/${trackId}`,
+    getAllTrackLayouts: (gameId: number) => `${gameRootEndpoint}/${gameId}/track-layouts`,
+    getLastChampionshipTrackIds: (gameId: number) => `${gameRootEndpoint}/${gameId}/last-championship-track-ids`,
 }
 
 export const gameApi = {
@@ -93,6 +95,24 @@ export const gameApi = {
             throw new Error(`Failed to fetch layouts for ${trackId}`);
         }
         return response.data;
+
+    },
+
+    listAllTrackLayouts: async (gameId: number): Promise<TrackLayout[]> => {
+        const response = await ApiClient.get<TrackLayout[]>(endpoints.getAllTrackLayouts(gameId));
+        if (!response.success) {
+            throw new Error(`Failed to fetch track layouts for ${gameId}`);
+        }
+        return response.data;
+
+    },
+
+    listLastChampionshipTrackIds: async (gameId: number): Promise<number[]> => {
+        const response = await ApiClient.get<number[]>(endpoints.getLastChampionshipTrackIds(gameId));
+        if (!response.success) {
+            throw new Error(`Failed to fetch last championship track ids for ${gameId}`);
+        }
+        return response.data ?? [];
 
     }
 }

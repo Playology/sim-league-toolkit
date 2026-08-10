@@ -11,6 +11,7 @@
     use HasIdentity;
 
     private int $corners;
+    private ?string $dlcPack = null;
     private string $game;
     private int $gameId;
     private string $layoutId;
@@ -29,6 +30,7 @@
 
       $result->setId($data->id);
       $result->seCorners($data->corners);
+      $result->setDlcPack($data->dlcPack ?? null);
       $result->setGame($data->game);
       $result->setGameId($data->gameId);
       $result->setLayoutId($data->layoutId);
@@ -42,6 +44,10 @@
 
     public function getCorners(): int {
       return $this->corners ?? 0;
+    }
+
+    public function getDlcPack(): ?string {
+      return $this->dlcPack ?? null;
     }
 
     public function getGame(): string {
@@ -76,6 +82,7 @@
       return [
         'id' => $this->getId(),
         'corners' => $this->getCorners(),
+        'dlcPack' => $this->getDlcPack(),
         'game' => $this->getGame(),
         'gameId' => $this->getGameId(),
         'layoutId' => $this->getLayoutId(),
@@ -88,6 +95,10 @@
 
     private function seCorners(int $corners): void {
       $this->corners = $corners;
+    }
+
+    private function setDlcPack(?string $dlcPack): void {
+      $this->dlcPack = $dlcPack;
     }
 
     private function setGame(string $game): void {

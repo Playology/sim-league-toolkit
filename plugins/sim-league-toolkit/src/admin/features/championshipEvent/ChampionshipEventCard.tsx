@@ -52,6 +52,12 @@ export const ChampionshipEventCard = ({
                         <td>{championshipEvent.trackLayout}</td>
                     </tr>
                 }
+                {championshipEvent.trackMasterCar &&
+                    <tr>
+                        <th scope='row'>{__('Car', 'sim-league-toolkit')}</th>
+                        <td>{championshipEvent.trackMasterCar}</td>
+                    </tr>
+                }
                 <tr>
                     <th scope='row'>{__('Start Date', 'sim-league-toolkit')}</th>
                     <td>{startDate}</td>

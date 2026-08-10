@@ -11,7 +11,6 @@
 
   class EventClassImporter implements MigrationImporter {
     private const string ENTITY_KEY = 'event-class';
-    private const string TRACK_MASTER_CAR_CLASS = 'FreeForAll';
 
     public function getEntityKey(): string {
       return self::ENTITY_KEY;
@@ -59,11 +58,6 @@
 
       if (!empty($legacyClass->eventId)) {
         $result->recordSkipped(sprintf(__('Car driver class %1$d (%2$s): tied to a specific legacy event, not a reusable template, skipped.', 'sim-league-toolkit'), $legacyId, $legacyClass->name));
-        return;
-      }
-
-      if ($legacyClass->carClass === self::TRACK_MASTER_CAR_CLASS) {
-        $result->recordSkipped(sprintf(__('Car driver class %1$d (%2$s): Track Master class, no SLTK equivalent, skipped.', 'sim-league-toolkit'), $legacyId, $legacyClass->name));
         return;
       }
 

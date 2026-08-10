@@ -4,6 +4,7 @@
 
   use Exception;
   use stdClass;
+  use Throwable;
   use wpdb;
 
   abstract class RepositoryBase {
@@ -16,6 +17,28 @@
       }
 
       return self::$db;
+    }
+
+    /**
+     * Runs $work inside a DB transaction, committing on success and rolling back and
+     * re-throwing on any failure.
+     *
+     * @throws Throwable
+     */
+    public static function transaction(callable $work): mixed {
+      self::db()->query('START TRANSACTION');
+
+      try {
+        $result = $work();
+
+        self::db()->query('COMMIT');
+
+        return $result;
+      } catch (Throwable $e) {
+        self::db()->query('ROLLBACK');
+
+        throw $e;
+      }
     }
 
     /**

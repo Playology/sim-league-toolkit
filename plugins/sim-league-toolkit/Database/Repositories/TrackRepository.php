@@ -43,6 +43,27 @@
      * @return stdClass[]
      * @throws Exception
      */
+    public static function listLayoutsForGame(int $gameId): array {
+      $trackLayoutsTableName = self::prefixedTableName(TableNames::TRACK_LAYOUTS);
+      $tracksTableName = self::prefixedTableName(TableNames::TRACKS);
+      $gamesTableName = self::prefixedTableName(TableNames::GAMES);
+
+      $query = "SELECT tl.*, g.name as game, t.shortName as track
+                FROM $trackLayoutsTableName tl
+                INNER JOIN $tracksTableName t
+                ON t.id = tl.trackId
+                INNER JOIN $gamesTableName g
+                ON g.id = tl.gameId
+                WHERE tl.gameId = {$gameId}
+                ORDER BY t.shortName, tl.name";
+
+      return self::getResults($query);
+    }
+
+    /**
+     * @return stdClass[]
+     * @throws Exception
+     */
     public static function listLayoutsForTrack(int $trackId): array {
       $trackLayoutsTableName = self::prefixedTableName(TableNames::TRACK_LAYOUTS);
       $tracksTableName = self::prefixedTableName(TableNames::TRACKS);

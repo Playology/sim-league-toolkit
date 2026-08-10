@@ -26,6 +26,7 @@
         new StandaloneEventImporter(),
         new ChampionshipImporter(),
         new ChampionshipEventImporter(),
+        new BannerImageBackfillImporter(),
         new StandaloneSessionResultImporter(),
         new ChampionshipSessionResultImporter(),
         new TrophyImporter(),

@@ -3,16 +3,20 @@ import {useState} from '@wordpress/element';
 
 import {ConfirmDialog} from 'primereact/confirmdialog';
 import {DataView} from 'primereact/dataview';
+import {InputText} from 'primereact/inputtext';
 
 import {BusyIndicator} from '../../components/BusyIndicator';
 import {StandaloneEvent, useStandaloneEvents, useDeleteStandaloneEvent} from '../../../features/standaloneEvent';
 import {StandaloneEventCard} from '../standaloneEvent/StandaloneEventCard';
 import {NewStandaloneEventEditor} from '../standaloneEvent/NewStandaloneEventEditor';
 import {StandaloneEventEditor} from '../standaloneEvent/StandaloneEventEditor';
+import {useSearchAndSort} from '../../hooks/useSearchAndSort';
 
 export const Events = () => {
     const {data: events = [], isLoading} = useStandaloneEvents();
     const {mutateAsync: deleteEvent} = useDeleteStandaloneEvent();
+    const {searchTerm, setSearchTerm, items: visibleEvents} = useSearchAndSort(
+        events, e => e.name, e => e.eventDate);
 
     const [isAdding, setIsAdding] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -60,9 +64,11 @@ export const Events = () => {
 
     const headerTemplate = () => {
         return (
-            <div className='flex justify-content-between'>
+            <div className='flex justify-content-between align-items-center'>
                 <div>{__('Events', 'sim-league-toolkit')}</div>
-                <div>
+                <div className='flex align-items-center gap-2'>
+                    <InputText value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                               placeholder={__('Search by name...', 'sim-league-toolkit')}/>
                     <button className='p-panel-header-icon p-link mr-2' onClick={onAdd}
                             title={__('Add a new Event', 'sim-league-toolkit')}>
                         <span className='pi pi-plus'></span>
@@ -85,7 +91,7 @@ export const Events = () => {
                 <p>
                     {__('The standalone events you have created are displayed below.', 'sim-league-toolkit')}
                 </p>
-                <DataView value={events} itemTemplate={itemTemplate} layout='grid' header={headerTemplate()}
+                <DataView value={visibleEvents} itemTemplate={itemTemplate} layout='grid' header={headerTemplate()}
                           emptyMessage={__('No Events have been defined.', 'sim-league-toolkit')}
                           style={{marginRight: '1rem'}}/>
             </>}

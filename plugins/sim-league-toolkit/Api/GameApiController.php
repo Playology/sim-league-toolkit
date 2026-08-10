@@ -67,6 +67,22 @@
       });
     }
 
+    public function listAllTrackLayouts(WP_REST_Request $request): WP_REST_Response {
+      return $this->execute(function () use ($request) {
+        $data = Game::getTrackLayoutsForGame($this->getId($request));
+
+        return ApiResponse::success(
+          array_map(fn($s) => $s->toDto(), $data)
+        );
+      });
+    }
+
+    public function listMostRecentChampionshipTrackIds(WP_REST_Request $request): WP_REST_Response {
+      return $this->execute(function () use ($request) {
+        return ApiResponse::success(Game::getMostRecentChampionshipTrackIds($this->getId($request)));
+      });
+    }
+
     public function listTracks(WP_REST_Request $request): WP_REST_Response {
       return $this->execute(function () use ($request) {
         $data = Game::getTracks($this->getId($request));
@@ -88,6 +104,8 @@
       $this->registerRoute($routeBase . 'platforms', 'GET', [$this, 'canRead'], [$this, 'listPlatforms']);
       $this->registerRoute($routeBase . 'tracks', 'GET', [$this, 'canRead'], [$this, 'listTracks']);
       $this->registerRoute($this->getResourceName() . '/tracks/(?P<id>\\d+)', 'GET', [$this, 'canRead'], [$this, 'listTrackLayouts']);
+      $this->registerRoute($routeBase . 'track-layouts', 'GET', [$this, 'canRead'], [$this, 'listAllTrackLayouts']);
+      $this->registerRoute($routeBase . 'last-championship-track-ids', 'GET', [$this, 'canRead'], [$this, 'listMostRecentChampionshipTrackIds']);
     }
 
     protected function onGet(WP_REST_Request $request): WP_REST_Response {

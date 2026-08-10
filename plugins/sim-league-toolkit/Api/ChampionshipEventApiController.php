@@ -108,5 +108,6 @@
       $entity->setStartDateTime($startDateTime ?: new \DateTime('now', new DateTimeZone('UTC')));
 
       $entity->setTrackLayoutId(isset($params['trackLayoutId']) && $params['trackLayoutId'] ? (int)$params['trackLayoutId'] : null);
+      $entity->setTrackMasterCarId(isset($params['trackMasterCarId']) && $params['trackMasterCarId'] ? (int)$params['trackMasterCarId'] : null);
     }
   }

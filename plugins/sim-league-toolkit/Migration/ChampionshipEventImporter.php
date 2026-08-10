@@ -20,6 +20,7 @@
     private const string ENTITY_KEY = 'championship-event';
     private const string CHAMPIONSHIP_ENTITY_KEY = 'championship';
 
+    private CarClassResolver $carClassResolver;
     private EventSessionMigrator $eventSessionMigrator;
     private GameKeyLookup $gameKeyLookup;
     private TrackResolver $trackResolver;
@@ -38,6 +39,7 @@
     public function run(): MigrationRunResult {
       $result = new MigrationRunResult();
 
+      $this->carClassResolver = new CarClassResolver();
       $this->eventSessionMigrator = new EventSessionMigrator();
       $this->gameKeyLookup = new GameKeyLookup();
       $this->trackResolver = new TrackResolver();
@@ -88,7 +90,7 @@
 
         $championshipId = MigrationRecordsRepository::getTargetId(self::CHAMPIONSHIP_ENTITY_KEY, (int)$legacyEvent->championshipId);
         if ($championshipId === null) {
-          $result->recordSkipped(sprintf(__('Event %1$d (%2$s): parent championship (legacy id %3$d) was not migrated (Track Master?), skipped.', 'sim-league-toolkit'), $legacyId, $legacyEvent->name, (int)$legacyEvent->championshipId));
+          $result->recordSkipped(sprintf(__('Event %1$d (%2$s): parent championship (legacy id %3$d) was not migrated, skipped.', 'sim-league-toolkit'), $legacyId, $legacyEvent->name, (int)$legacyEvent->championshipId));
           return;
         }
 
@@ -108,6 +110,16 @@
         $championshipEvent->setStartDateTime($this->resolveStartDateTime($legacyEvent));
         $championshipEvent->setIsActive((bool)$legacyEvent->isActive);
         $championshipEvent->setBannerImageUrl($legacyEvent->bannerImageUrl ?? '');
+
+        if (!empty($legacyEvent->isTrackMasterEvent)) {
+          $trackMasterCarId = $this->carClassResolver->resolveCarId((int)($legacyEvent->trackMasterCarId ?? 0), $gameId);
+          if ($trackMasterCarId === null) {
+            throw new Exception(sprintf('Track Master car (legacy id %d) could not be matched to an SLTK car', (int)($legacyEvent->trackMasterCarId ?? 0)));
+          }
+
+          $championshipEvent->setTrackMasterCarId($trackMasterCarId);
+        }
+
         $championshipEvent->save();
 
         MigrationRecordsRepository::recordMigration(self::ENTITY_KEY, $legacyId, $championshipEvent->getId());
