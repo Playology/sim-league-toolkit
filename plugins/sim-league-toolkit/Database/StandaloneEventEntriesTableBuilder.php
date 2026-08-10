@@ -21,6 +21,10 @@
       if (empty($wpdb->get_results("SHOW COLUMNS FROM {$tableName} LIKE 'created_at'"))) {
         $wpdb->query("ALTER TABLE {$tableName} ADD COLUMN created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP");
       }
+
+      if (empty($wpdb->get_results("SHOW COLUMNS FROM {$tableName} LIKE 'teamName'"))) {
+        $wpdb->query("ALTER TABLE {$tableName} ADD COLUMN teamName TINYTEXT NULL");
+      }
     }
 
     public function definitionSql(string $tablePrefix, string $charsetCollate): string {

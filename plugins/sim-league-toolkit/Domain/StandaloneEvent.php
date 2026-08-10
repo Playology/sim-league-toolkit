@@ -17,7 +17,9 @@
 
   class StandaloneEvent extends EventBase implements AggregateRoot, Deletable, Listable, ProvidesPersistableArray, Saveable {
     private bool $isPublic = true;
+    private bool $isTeamEvent = false;
     private int $maxEntrants = 0;
+    private int $maxTeamSize = 0;
     private string $ruleSet = '';
     private ?int $ruleSetId = null;
     private string $scoringSet = '';
@@ -94,7 +96,9 @@
     protected function hydrateFromStdClass(stdClass $data): void {
       parent::hydrateFromStdClass($data);
       $this->isPublic = (bool)($data->isPublic ?? true);
+      $this->isTeamEvent = (bool)($data->isTeamEvent ?? false);
       $this->maxEntrants = (int)($data->maxEntrants ?? 0);
+      $this->maxTeamSize = (int)($data->maxTeamSize ?? 0);
       $this->scoringSetId = isset($data->scoringSetId) && $data->scoringSetId > 0 ? (int)$data->scoringSetId : null;
       $this->scoringSet = $data->scoringSet ?? '';
       $this->ruleSetId = isset($data->ruleSetId) && $data->ruleSetId > 0 ? (int)$data->ruleSetId : null;
@@ -152,12 +156,28 @@
       $this->isPublic = $value;
     }
 
+    public function getIsTeamEvent(): bool {
+      return $this->isTeamEvent;
+    }
+
+    public function setIsTeamEvent(bool $value): void {
+      $this->isTeamEvent = $value;
+    }
+
     public function getMaxEntrants(): int {
       return $this->maxEntrants;
     }
 
     public function setMaxEntrants(int $value): void {
       $this->maxEntrants = $value;
+    }
+
+    public function getMaxTeamSize(): int {
+      return $this->maxTeamSize;
+    }
+
+    public function setMaxTeamSize(int $value): void {
+      $this->maxTeamSize = $value;
     }
 
     public function getRuleSet(): string {
@@ -222,6 +242,8 @@
       $result['ruleSetId'] = $this->getRuleSetId();
       $result['maxEntrants'] = $this->getMaxEntrants();
       $result['isPublic'] = $this->getIsPublic();
+      $result['isTeamEvent'] = $this->getIsTeamEvent();
+      $result['maxTeamSize'] = $this->getMaxTeamSize();
       $result['startTime'] = $this->getStartTime();
       $result['trophiesAwarded'] = $this->getTrophiesAwarded();
 
@@ -237,6 +259,8 @@
       $result['ruleSet'] = $this->getRuleSet();
       $result['maxEntrants'] = $this->getMaxEntrants();
       $result['isPublic'] = $this->getIsPublic();
+      $result['isTeamEvent'] = $this->getIsTeamEvent();
+      $result['maxTeamSize'] = $this->getMaxTeamSize();
       $result['startTime'] = $this->getStartTime();
       $result['trophiesAwarded'] = $this->getTrophiesAwarded();
 

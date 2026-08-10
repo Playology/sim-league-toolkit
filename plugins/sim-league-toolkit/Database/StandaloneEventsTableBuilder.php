@@ -20,6 +20,14 @@
       if (empty($wpdb->get_results("SHOW COLUMNS FROM {$tableName} LIKE 'trophiesAwarded'"))) {
         $wpdb->query("ALTER TABLE {$tableName} ADD COLUMN trophiesAwarded BIT NOT NULL DEFAULT 0");
       }
+
+      if (empty($wpdb->get_results("SHOW COLUMNS FROM {$tableName} LIKE 'isTeamEvent'"))) {
+        $wpdb->query("ALTER TABLE {$tableName} ADD COLUMN isTeamEvent BIT NOT NULL DEFAULT 0");
+      }
+
+      if (empty($wpdb->get_results("SHOW COLUMNS FROM {$tableName} LIKE 'maxTeamSize'"))) {
+        $wpdb->query("ALTER TABLE {$tableName} ADD COLUMN maxTeamSize TINYINT NOT NULL DEFAULT 0");
+      }
     }
 
     public function definitionSql(string $tablePrefix, string $charsetCollate): string {

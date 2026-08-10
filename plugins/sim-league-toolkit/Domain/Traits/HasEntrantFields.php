@@ -15,6 +15,7 @@
     private string $memberName = '';
     private int $raceNumber = 0;
     private string $status = 'confirmed';
+    private ?string $teamName = null;
     private int $userId = Constants::DEFAULT_ID;
 
     public function getAvatarUrl(): string {
@@ -89,6 +90,18 @@
       $this->status = $value;
     }
 
+    public function getTeamName(): ?string {
+      return $this->teamName;
+    }
+
+    public function setTeamName(?string $value): void {
+      $this->teamName = $value;
+    }
+
+    public function isTeamEntry(): bool {
+      return $this->teamName !== null;
+    }
+
     public function getUserId(): int {
       return $this->userId;
     }
@@ -102,6 +115,7 @@
         'carId' => $this->getCarId(),
         'userId' => $this->getUserId(),
         'status' => $this->getStatus(),
+        'teamName' => $this->getTeamName(),
       ];
     }
 
@@ -117,6 +131,7 @@
         'carName' => $this->getCarName(),
         'status' => $this->getStatus(),
         'createdAt' => $this->getCreatedAt(),
+        'teamName' => $this->getTeamName(),
       ];
     }
 
@@ -131,5 +146,6 @@
       $this->setCarName($data->carName ?? '');
       $this->setStatus($data->status ?? 'confirmed');
       $this->setCreatedAt($data->created_at ?? '');
+      $this->setTeamName($data->teamName ?? null);
     }
   }

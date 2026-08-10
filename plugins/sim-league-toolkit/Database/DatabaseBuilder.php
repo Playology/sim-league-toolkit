@@ -49,6 +49,11 @@
       self::$builders[] = new PlanClassesTableBuilder();
       self::$builders[] = new PlanClassVotesTableBuilder();
       self::$builders[] = new MigrationRecordsTableBuilder();
+      self::$builders[] = new TeamsTableBuilder();
+      self::$builders[] = new TeamMembersTableBuilder();
+      self::$builders[] = new TeamInvitationsTableBuilder();
+      self::$builders[] = new TeamRequestsTableBuilder();
+      self::$builders[] = new EventTeamMembersTableBuilder();
     }
 
     public static function initialiseOrUpdate(): void {

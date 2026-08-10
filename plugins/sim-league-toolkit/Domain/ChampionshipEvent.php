@@ -27,6 +27,8 @@
     private ?int $eventRefId = null;
     private bool $isActive = false;
     private bool $isCompleted = false;
+    private bool $isTeamEvent = false;
+    private int $maxTeamSize = 0;
     private string $name = '';
     private DateTime $startDateTime;
     private string $track = '';
@@ -77,6 +79,8 @@
       $result->setStartDateTime($startDateTime ?: new DateTime('now', new DateTimeZone('UTC')));
       $result->setIsActive((bool)($data->isActive ?? false));
       $result->setIsCompleted((bool)($data->isCompleted ?? false));
+      $result->setIsTeamEvent((bool)($data->isTeamEvent ?? false));
+      $result->setMaxTeamSize((int)($data->maxTeamSize ?? 0));
       $result->setBannerImageUrl($data->bannerImageUrl ?? '');
       $result->setChampionship($data->championship ?? '');
       $result->setTrack($data->track ?? '');
@@ -143,6 +147,22 @@
 
     public function setIsCompleted(bool $value): void {
       $this->isCompleted = $value;
+    }
+
+    public function getIsTeamEvent(): bool {
+      return $this->isTeamEvent;
+    }
+
+    public function setIsTeamEvent(bool $value): void {
+      $this->isTeamEvent = $value;
+    }
+
+    public function getMaxTeamSize(): int {
+      return $this->maxTeamSize;
+    }
+
+    public function setMaxTeamSize(int $value): void {
+      $this->maxTeamSize = $value;
     }
 
     public function getName(): string {
@@ -297,6 +317,8 @@
         'startDateTime' => $this->getStartDateTime()->format('Y-m-d H:i:s'),
         'isActive' => $this->getIsActive(),
         'isCompleted' => $this->getIsCompleted(),
+        'isTeamEvent' => $this->getIsTeamEvent(),
+        'maxTeamSize' => $this->getMaxTeamSize(),
         'bannerImageUrl' => $this->getBannerImageUrl(),
         'trophiesAwarded' => $this->getTrophiesAwarded(),
       ];
@@ -315,6 +337,8 @@
         'startDateTime' => $this->getStartDateTime()->format(DateTimeInterface::RFC3339_EXTENDED),
         'isActive' => $this->getIsActive(),
         'isCompleted' => $this->getIsCompleted(),
+        'isTeamEvent' => $this->getIsTeamEvent(),
+        'maxTeamSize' => $this->getMaxTeamSize(),
         'bannerImageUrl' => $this->getBannerImageUrl(),
         'championship' => $this->getChampionship(),
         'track' => $this->getTrack(),

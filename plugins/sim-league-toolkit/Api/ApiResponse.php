@@ -29,6 +29,14 @@
       ], 404);
     }
 
+    public static function forbidden(string $message = 'You do not have permission to perform this action.'): WP_REST_Response
+    {
+      return new WP_REST_Response([
+        'code' => 'forbidden',
+        'message' => $message
+      ], 403);
+    }
+
     public static function badRequest(string $message, array $errors = []): WP_REST_Response
     {
       $response = [

@@ -10,6 +10,14 @@
     }
 
     public function applyAdjustments(string $tablePrefix): void {
+      global $wpdb;
+      $tableName = $this->tableName($tablePrefix);
+
+      if (empty($wpdb->get_results("SHOW COLUMNS FROM {$tableName} LIKE 'supportsTeamEvents'"))) {
+        $wpdb->query("ALTER TABLE {$tableName} ADD COLUMN supportsTeamEvents BIT NOT NULL DEFAULT 0");
+      }
+
+      $wpdb->update($tableName, ['supportsTeamEvents' => true], ['gameKey' => GameKey::AssettoCorsaCompetizione->value]);
     }
 
     public function definitionSql(string $tablePrefix, string $charsetCollate): string {
@@ -23,6 +31,7 @@
         supportsResultUpload bit NOT NULL DEFAULT 0,
         published bit NOT NULL DEFAULT 0,
         supportsLayouts bit NOT NULL DEFAULT 0,
+        supportsTeamEvents bit NOT NULL DEFAULT 0,
         PRIMARY KEY  (id)
       ) {$charsetCollate};";
     }
@@ -39,6 +48,7 @@
           'supportsResultUpload' => true,
           'published' => true,
           'supportsLayouts' => false,
+          'supportsTeamEvents' => true,
         ],
         [
           'name' => 'Assetto Corsa',

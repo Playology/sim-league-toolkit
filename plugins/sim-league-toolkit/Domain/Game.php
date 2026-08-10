@@ -21,6 +21,7 @@
     private bool $published = false;
     private bool $supportsLayouts = false;
     private bool $supportsResultUpload = false;
+    private bool $supportsTeamEvents = false;
 
     public static function fromStdClass(?stdClass $data): ?self {
       if (!$data) {
@@ -36,6 +37,7 @@
       $result->setSupportsResultUpload($data->supportsResultUpload ?? false);
       $result->setPublished($data->published ?? false);
       $result->setSupportsLayouts($data->supportsLayouts ?? false);
+      $result->setSupportsTeamEvents($data->supportsTeamEvents ?? false);
 
       return $result;
     }
@@ -187,6 +189,10 @@
       return $this->supportsResultUpload;
     }
 
+    public function getSupportsTeamEvents(): bool {
+      return $this->supportsTeamEvents;
+    }
+
     /**
      * @return array{columnName: string, value: mixed}
      */
@@ -199,6 +205,7 @@
         'supportsResultUpload' => $this->getSupportsResultUpload(),
         'published' => $this->getIsPublished(),
         'supportsLayouts' => $this->getSupportsLayouts(),
+        'supportsTeamEvents' => $this->getSupportsTeamEvents(),
       ];
     }
 
@@ -226,6 +233,10 @@
 
     private function setSupportsLayouts(bool $value): void {
       $this->supportsLayouts = $value;
+    }
+
+    private function setSupportsTeamEvents(bool $value): void {
+      $this->supportsTeamEvents = $value;
     }
 
     private function setSupportsResultUpload(bool $value): void {

@@ -52,6 +52,7 @@
       '#/' . ResourceNames::SERVER . '#' => ServerApiController::class,
       '#/' . ResourceNames::MEMBER . '#' => MemberApiController::class,
       '#/' . ResourceNames::MIGRATION . '#' => MigrationApiController::class,
+      '#/' . ResourceNames::TEAM . '#' => TeamApiController::class,
     ];
 
     public static function init(): void {

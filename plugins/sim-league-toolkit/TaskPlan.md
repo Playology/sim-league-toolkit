@@ -98,6 +98,16 @@ migrated** (member profiles through Trophies) — Gutenberg blocks/theme work re
      hand-off into the Championship Builder. See "Championship Plans (admin side)" section below for
      full architecture. **Still to come: the public-facing Gutenberg voting block** (open-plans list +
      tile-dialog voting UI + favourites/"pick for me") — not started, next up.
+4.6 🔶 **Front-end page inventory + Teams work surfaced 2026-08-10** — while working through ACCLT's
+   full page-by-page functionality ahead of the eventual Sixty Simthings cutover (see "Front-end
+   page inventory" section below for the full categorized list), Teams turned out to be a
+   previously-uncaptured parity gap spanning three pieces: site-level Teams, National/Team Standings
+   on the standings tabs, and a driver-swap-gated Team Events registration flow. Mike asked for all
+   of it to be built next, ahead of the Plans voting block above. **Backend done this session**
+   (schema, domain, standings calculators, member-facing API); **frontend blocks, admin event-editor
+   toggle, and migration importers still ahead** — see "Teams feature" section below for full detail
+   and architecture. Detail pages (single Championship/Event pages) remain explicitly deferred to
+   their own later phase, same as before.
 5. **Per-game result import** — parsing/import per game, built on manual entry. The theme's biggest
    complexity area (3 separate bespoke parsers for ACC/AMS2 old/AMS2 new) — needs a real
    `ResultParser`-per-`GameKey` abstraction here, not the theme's string-branching approach.
@@ -271,6 +281,19 @@ front-end parity gap (~30 ACCLT page templates) is still ahead. Typography varie
 variations deliberately deferred (system font stacks only, to avoid webfont-loading/licensing
 concerns) — revisit if Mike wants more visual distinction than color alone gives.
 
+**Superseded 2026-08-10, not yet built**: the auto-provisioning-on-activation behaviour described
+above (`PageProvisioningService`/`NavigationProvisioningService` seeding Championships/Events pages
++ nav on theme activation) is being redesigned. Mike's call: activation should do nothing to
+content; instead a single theme admin page offers checkboxes for what it can provision (header,
+menu, standard pages, etc.), a button to trigger it, a status indicator for what's already been
+provisioned, and a way to remove provisioned items and fall back to the original state. This also
+becomes the "plugin-hosted site setup picker" already flagged as a future item just above. Removal
+should detect if a provisioned page was edited afterward (compare `post_modified`, or a content
+hash, against the value recorded at provisioning time) and prompt the admin rather than silently
+deleting or silently keeping it. Reuse the `sltk_migration_records` idempotent-tracking shape
+(source→target id mapping) rather than inventing a new mechanism. Not started — comes after the
+current Teams work below.
+
 ## Personalized dashboard blocks phase (2026-08-04) — built, not yet tested by Mike
 
 Replicates ACCLT's home page behaviour (anonymous visitors see a welcome description; logged-in
@@ -409,6 +432,97 @@ Mike in the browser against the `accleaugetools`-junctioned site (its own `sim-l
 DB wasn't running this session — same DB-fix recipe applies there too if Mike switches sites, just
 needs a plugin deactivate/reactivate to pick up schema changes made only via `TableBuilder` edits and
 not also applied live).
+
+## Front-end page inventory (ACCLT parity, 2026-08-10)
+
+Full inventory of `acc-league-tools`' `site/` folder (34 top-level WP page templates + their
+controllers/template-parts), done to sequence the remaining Gutenberg blocks/theme work — see
+"Current priority"/sequencing plan above. Snapshot; re-verify against the theme if acting on this
+later.
+
+**Already done in SLTK**: Home dashboard, Championships/Events lists, My Events/My Results/My
+Trophies/Latest Results/Joinable Items — see the blocks-phase sections above.
+
+**Next up (already sequenced)**: Championship Plan public voting block.
+
+**Biggest gap: single Championship/Event detail pages.** Neither exists yet — tiles currently open a
+`<dialog>` instead of linking anywhere. ACCLT's versions have banner/dates/description/classes plus
+tabs: Championship = Events/Entrants/Standings; Event = Sessions/Settings/Scoring/Entrants/Results.
+**Deliberately deferred** (Mike's call 2026-08-10) to their own later phase — the Teams work below
+gets a small standalone standings block instead of pulling this forward.
+
+**Public join/entry flow — entirely missing.** `join-championship`/`join-event`/change-entry/leave
+pages have no SLTK equivalent at all. This blocks the Join/Change-Entry buttons that would live on
+the detail pages above — a real dependency, not an independent item, whenever detail pages get built.
+
+**Teams — turned out to be three separable pieces, not one.** See "Teams feature" section below;
+in progress as of 2026-08-10.
+
+**Stats — not started.** All-time driver/league stats (wins/poles/valid-lap-%), plus `user-trophy-tile`
+which implies a **public member profile page** (viewing someone else's trophies) distinct from the
+existing "My Trophies" (self) block.
+
+**Self-service profile — not started.** ACCLT's `page-user-profile.php` (account settings, game/DLC
+content, guest invitation, league settings, team tabs). SLTK only exposes profile fields via the
+admin-only wp-admin Edit User screen today.
+
+**Also not started**: Notifications (`page-notifications.php` + dismiss/acknowledge/accept-invitation
+pages), Sponsors, Rules, Registration (`page-register.php`).
+
+**Skip entirely**: Time Trials (already declined), About Us/Logout (no toolkit logic — trivial
+native WP page / core logout, not worth a memory entry each).
+
+## Teams feature (site-level Teams, National/Team Standings, gated Team Events) — 2026-08-10, IN PROGRESS
+
+Surfaced while inventorying front-end parity above — not in the original parity gap analysis.
+Backend built and `php -l` clean this session; **frontend blocks, admin event-editor toggle, and
+migration importers still ahead.** Full session plan at
+`C:\Users\contr\.claude\plans\shiny-sparking-pixel.md`.
+
+**Scope — three distinct pieces, confirmed with Mike**:
+1. **Site-level Teams** — members create a persistent team, invite/accept or request/accept to join.
+   Entirely member-driven, no admin involvement.
+2. **National/Team Standings** — alternate groupings (by migrated nationality, by team membership) of
+   the exact same per-driver points the Trophies-era `ChampionshipStandingsCalculator` already
+   computes. Championship-level only for now; session/event-level deferred with the rest of detail
+   pages.
+3. **Team Events** — registration-time driver-swap flow, gated to games that support it via new
+   `Game::supportsTeamEvents` (ACC only for now, mirrors `supportsLayouts`). LMU deliberately
+   excluded — not yet looked at, not currently hosted.
+
+**Key architecture decision — reuse the entry model, don't fork it.** ACCLT's team-event results are
+one leaderboard line *per team* (not per driver), so in SLTK the entry itself
+(`ChampionshipEntry`/`StandaloneEventEntry`) represents the team when it's a team entry — a new
+nullable `teamName` field on `HasEntrantFields` marks this, `userId` holds the owner for display. A
+new `EventTeamMember` table (polymorphic `entryScope`/`entryId`, same shape as `Trophy`'s
+`scope`/`scopeId`) is just the roster of who may drive — it doesn't multiply entry or result rows.
+Zero new results/waitlist/standings plumbing was needed for team events as a result.
+
+**Built this session** (schema, domain, API — all `php -l` clean):
+- 5 new tables (`sltk_teams`, `sltk_team_members`, `sltk_team_invitations`, `sltk_team_requests`,
+  `sltk_event_team_members`) + `teamName` on both entry tables, `isTeamEvent`/`maxTeamSize` on both
+  event tables, `supportsTeamEvents` on Games (seeded true for ACC only).
+- Domain: `Team`, `TeamMember`, `TeamInvitation`, `TeamRequest`, `EventTeamMember`, plus the matching
+  fields on `Game`, `ChampionshipEvent`, `StandaloneEvent`.
+- `NationalStandingsCalculator`/`TeamStandingsCalculator` — refactored `ChampionshipStandingsCalculator`
+  to share one aggregation step (`aggregateEntryPoints()`) so both new calculators re-group the same
+  per-entry totals instead of re-querying; no behaviour change to the existing calculator.
+- `TeamApiController` — the plugin's **second fully member-gated controller** (ownership/membership
+  checked per-action inside the handler, same approach as `ChampionshipPlanVoteApiController`):
+  browse/create/edit/delete/invite/accept/decline/request/leave. New `ApiResponse::forbidden()`
+  helper added alongside the existing response factories.
+
+**Still ahead**: front-end blocks for team management (browse/create/manage/invitations/requests)
+and a standalone `sltk/championship-standings` block (Individual/National/Team); admin `isTeamEvent`
+toggle in the existing event editors; a `Join Team Event` entry point (new button on
+`sltk/event-tile`'s dialog + a standalone join page/block, since detail pages are deferred);
+`Migration\TeamImporter`/`Migration\EventTeamImporter` (plus verifying whether the existing
+session-result importers already handle team-level leaderboard lines correctly, since those key on
+`playerId` which team lines don't have the same way — flagged as a likely real gap, not yet checked);
+`tsc`/`npm run build`; and actual plugin reactivation + browser verification against real
+`accleaugetools`-junctioned data. Frontend interaction shape (plain forms + small `fetch()` calls, no
+framework, matching the project's existing front-end philosophy) is a proposal only — refine once
+Mike can see it in the browser, don't treat it as locked in.
 
 ## Legacy data migration (ACCLT → SLTK, 2026-08-02 → 2026-08-03) — DONE
 

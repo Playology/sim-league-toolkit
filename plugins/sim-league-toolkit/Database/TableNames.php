@@ -18,6 +18,7 @@
     public final const string EVENT_REFS = 'sltk_event_refs';
     public final const string EVENT_SESSIONS = 'sltk_event_sessions';
     public final const string EVENT_SESSION_ATTRIBUTES = 'sltk_event_session_attributes';
+    public final const string EVENT_TEAM_MEMBERS = 'sltk_event_team_members';
     public final const string GAMES = 'sltk_games';
     public final const string GAME_PLATFORMS = 'sltk_game_platforms';
     public final const string MIGRATION_RECORDS = 'sltk_migration_records';
@@ -41,6 +42,10 @@
     public final const string STANDALONE_EVENT_ENTRIES = 'sltk_standalone_event_entries';
     public final const string STANDALONE_RESULT_PENALTIES = 'sltk_standalone_result_penalties';
     public final const string STANDALONE_SESSION_RESULTS = 'sltk_standalone_session_results';
+    public final const string TEAMS = 'sltk_teams';
+    public final const string TEAM_INVITATIONS = 'sltk_team_invitations';
+    public final const string TEAM_MEMBERS = 'sltk_team_members';
+    public final const string TEAM_REQUESTS = 'sltk_team_requests';
     public final const string TRACKS = 'sltk_tracks';
     public final const string TRACK_LAYOUTS = 'sltk_track_layouts';
     public final const string TROPHIES = 'sltk_trophies';
