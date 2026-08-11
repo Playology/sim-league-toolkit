@@ -22,6 +22,7 @@
     public final const string GAME_CONFIG = 'game-config';
     public final const string MEMBER = 'member';
     public final const string MIGRATION = 'migration';
+    public final const string PROVISIONING = 'provisioning';
     public final const string RACE_NUMBER = 'race-number';
     public final const string RULE_SET = 'rule-set';
     public final const string RULE_SET_RULE = 'rule-set-rule';

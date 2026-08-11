@@ -49,6 +49,7 @@
       self::$builders[] = new PlanClassesTableBuilder();
       self::$builders[] = new PlanClassVotesTableBuilder();
       self::$builders[] = new MigrationRecordsTableBuilder();
+      self::$builders[] = new ProvisionedItemsTableBuilder();
       self::$builders[] = new TeamsTableBuilder();
       self::$builders[] = new TeamMembersTableBuilder();
       self::$builders[] = new TeamInvitationsTableBuilder();

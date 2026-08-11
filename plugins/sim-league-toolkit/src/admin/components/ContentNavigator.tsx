@@ -7,6 +7,7 @@ import {Events} from '../features/event/Events';
 import {EventClasses} from '../features/eventClass/EventClasses';
 import {ScoringSets} from '../features/scoringSet/ScoringSets';
 import {Servers} from '../features/server/Servers';
+import {SiteSetup} from '../features/siteSetup/SiteSetup';
 import {ViewType} from '../types/ViewType';
 
 interface ContentNavigatorProps {
@@ -30,6 +31,8 @@ export const ContentNavigator = ({currentView}: ContentNavigatorProps) => {
             return <ScoringSets/>;
         case 'servers':
             return <Servers/>;
+        case 'siteSetup':
+            return <SiteSetup/>;
         default:
             return <Dashboard/>
     }

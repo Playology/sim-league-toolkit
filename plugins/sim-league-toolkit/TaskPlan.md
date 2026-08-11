@@ -107,7 +107,9 @@ migrated** (member profiles through Trophies) — Gutenberg blocks/theme work re
    (schema, domain, standings calculators, member-facing API); **frontend blocks, admin event-editor
    toggle, and migration importers still ahead** — see "Teams feature" section below for full detail
    and architecture. Detail pages (single Championship/Event pages) remain explicitly deferred to
-   their own later phase, same as before.
+   their own later phase, same as before. **Site Setup provisioning was built ahead of the rest of
+   Teams**, same day, per Mike's direct ask — see its own section below; Teams frontend/toggle/
+   importers are still the next unfinished item after it.
 5. **Per-game result import** — parsing/import per game, built on manual entry. The theme's biggest
    complexity area (3 separate bespoke parsers for ACC/AMS2 old/AMS2 new) — needs a real
    `ResultParser`-per-`GameKey` abstraction here, not the theme's string-branching approach.
@@ -281,18 +283,12 @@ front-end parity gap (~30 ACCLT page templates) is still ahead. Typography varie
 variations deliberately deferred (system font stacks only, to avoid webfont-loading/licensing
 concerns) — revisit if Mike wants more visual distinction than color alone gives.
 
-**Superseded 2026-08-10, not yet built**: the auto-provisioning-on-activation behaviour described
-above (`PageProvisioningService`/`NavigationProvisioningService` seeding Championships/Events pages
-+ nav on theme activation) is being redesigned. Mike's call: activation should do nothing to
-content; instead a single theme admin page offers checkboxes for what it can provision (header,
-menu, standard pages, etc.), a button to trigger it, a status indicator for what's already been
-provisioned, and a way to remove provisioned items and fall back to the original state. This also
-becomes the "plugin-hosted site setup picker" already flagged as a future item just above. Removal
-should detect if a provisioned page was edited afterward (compare `post_modified`, or a content
-hash, against the value recorded at provisioning time) and prompt the admin rather than silently
-deleting or silently keeping it. Reuse the `sltk_migration_records` idempotent-tracking shape
-(source→target id mapping) rather than inventing a new mechanism. Not started — comes after the
-current Teams work below.
+**Superseded 2026-08-10, built and confirmed working by Mike same day**: the auto-provisioning-on-
+activation behaviour described above is dead code, not removed — replaced by the plugin-hosted
+"Site Setup" page. See "Site Setup provisioning" section below for full detail. `themes/sim-league-toolkit-theme`
+itself was **not** touched — its old activation-time provisioning still exists, unused by the new
+system, and the theme's own future (keep for its palette/style-variation layer, retire, fold in
+later) is now a separate open question, not decided this session.
 
 ## Personalized dashboard blocks phase (2026-08-04) — built, not yet tested by Mike
 
@@ -523,6 +519,42 @@ session-result importers already handle team-level leaderboard lines correctly, 
 `accleaugetools`-junctioned data. Frontend interaction shape (plain forms + small `fetch()` calls, no
 framework, matching the project's existing front-end philosophy) is a proposal only — refine once
 Mike can see it in the browser, don't treat it as locked in.
+
+## Site Setup provisioning (2026-08-10) — DONE, confirmed working by Mike
+
+Built the same day as, but ahead of finishing, the Teams work above — an explicit reprioritization
+by Mike, not a sequencing mistake. Replaces the theme's old activation-time auto-provisioning (see
+"Superseded" note above) with a plugin-hosted "Site Setup" nav item: create/adopt/overwrite/remove
+starter pages (Home, Championships, Events) and a primary navigation menu, all built from SLTK
+blocks, in whatever theme happens to be active — no dependency on `sim-league-toolkit-theme` at all.
+Full design/build notes and every bug found along the way: see project memory (Claude Code
+maintains this — ask it to recall "Site Setup provisioning" for full detail).
+
+**Key points**:
+- New `Provisioning\` namespace + `sltk_provisioned_items` tracking table (same idempotent shape as
+  `sltk_migration_records`). Per-item states: Not provisioned / Existing item found (conflict) /
+  Provisioned / Edited since provisioned (drift, via a content hash taken *after* WP's save
+  filters run — hashing the pre-save string was a real bug, now fixed).
+- Actions: **Create** (nothing exists yet), **Adopt** (track an existing item as-is, no content
+  change), **Overwrite** (replace existing/tracked content with SLTK's generated content —
+  originally conflict-only, extended so it also works as **Refresh content** on already-provisioned
+  pages once Mike asked for it as an ongoing "pull in pattern updates" workflow; excluded for the
+  Home page once tracked, since Home's generated content is deliberately blank and a refresh there
+  would just wipe out whatever Mike has written by hand), **Stop tracking** (forget it, leave the
+  page alone — item then shows back up as a conflict, not "not provisioned", since the content is
+  still there) and **Delete** (actually removes the page/nav; for Home also reverts the front-page
+  option if it still points there — this is the one that gives a true "as if it never existed"
+  state).
+- Site suitability warnings (page-builder plugins/themes active, unusually high page count, non-
+  block active theme) are advisory only, never block provisioning — always the admin's call.
+- Real bugs found and fixed live this session, worth remembering for any future dynamic REST route
+  in this plugin: **don't use characters that need percent-encoding (e.g. `:`) in a route's dynamic
+  URL segment** — WP's REST router matches against the still-encoded raw path, so `%3A` never
+  becomes `:` before the regex runs. Item keys are hyphenated (`page-home`, not `page:home`) for
+  this reason.
+
+`php -l`/`tsc`/`npm run build` clean throughout; confirmed working by Mike in the browser against
+the `accleaugetools`-junctioned site.
 
 ## Legacy data migration (ACCLT → SLTK, 2026-08-02 → 2026-08-03) — DONE
 

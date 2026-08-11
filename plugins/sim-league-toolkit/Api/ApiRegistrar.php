@@ -52,6 +52,7 @@
       '#/' . ResourceNames::SERVER . '#' => ServerApiController::class,
       '#/' . ResourceNames::MEMBER . '#' => MemberApiController::class,
       '#/' . ResourceNames::MIGRATION . '#' => MigrationApiController::class,
+      '#/' . ResourceNames::PROVISIONING . '#' => ProvisioningApiController::class,
       '#/' . ResourceNames::TEAM . '#' => TeamApiController::class,
     ];
 

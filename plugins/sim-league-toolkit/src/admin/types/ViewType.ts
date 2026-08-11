@@ -7,4 +7,5 @@ export type ViewType =
     | 'games'
     | 'ruleSets'
     | 'scoringSets'
-    | 'servers';
+    | 'servers'
+    | 'siteSetup';

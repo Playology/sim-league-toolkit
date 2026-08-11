@@ -30,6 +30,7 @@
     public final const string PLAN_TRACK_FAVOURITES = 'sltk_plan_track_favourites';
     public final const string PLAN_TRACK_VOTES = 'sltk_plan_track_votes';
     public final const string PLATFORMS = 'sltk_platforms';
+    public final const string PROVISIONED_ITEMS = 'sltk_provisioned_items';
     public final const string RACE_NUMBERS = 'sltk_race_numbers';
     public final const string RULE_SETS = 'sltk_rule_sets';
     public final const string RULE_SET_RULES = 'sltk_rule_set_rules';

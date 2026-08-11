@@ -82,6 +82,11 @@ export const SimLeagueToolkitApp = () => {
             label: __('Servers', 'sim-league-toolkit'),
             icon: 'fa-solid fa-server',
             view: 'servers',
+        },
+        {
+            label: __('Site Setup', 'sim-league-toolkit'),
+            icon: 'fa-solid fa-sitemap',
+            view: 'siteSetup',
         }
     ];
 
